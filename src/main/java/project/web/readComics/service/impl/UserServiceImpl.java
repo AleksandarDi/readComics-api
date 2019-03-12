@@ -4,12 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.web.readComics.model.Comic;
-import project.web.readComics.model.TestRole;
 import project.web.readComics.model.User;
 import project.web.readComics.repository.ComicsRepository;
+import project.web.readComics.repository.RolesRepository;
 import project.web.readComics.repository.UsersRepository;
 import project.web.readComics.service.UserService;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -18,16 +19,16 @@ public class UserServiceImpl implements UserService {
 
     private final UsersRepository repository;
     private final ComicsRepository rep;
+    private final RolesRepository rolesRepository;
 
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-  // private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-    public UserServiceImpl(UsersRepository repository, ComicsRepository rep) {
+    public UserServiceImpl(UsersRepository repository, ComicsRepository rep, RolesRepository rolesRepository) {
         this.repository = repository;
         this.rep = rep;
+        this.rolesRepository = rolesRepository;
     }
 
     @Override
@@ -38,7 +39,7 @@ public class UserServiceImpl implements UserService {
             u.setName(userName);
             u.setLastName(fullName);
             u.setPassword(p);
-            u.setRoles(TestRole.ROLE_WEB_USER);
+            u.setRoles(Arrays.asList(rolesRepository.findByRole("User")));
             //User us = new User(email,p,userName,fullName);
             repository.save(u);
 
@@ -52,11 +53,11 @@ public class UserServiceImpl implements UserService {
    /* @Override
     public void AddFavourite(String user_id, String comic_id){
 
-    }*/
+    }
 
     @Override
     public List<Comic> getAllFavourites(int id){
        return rep.getFavourites(id);
     }
-
+        */
 }

@@ -2,6 +2,7 @@ package project.web.readComics.model;
 
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Set;
 
 @Entity
@@ -23,33 +24,14 @@ public class User {
     private String fullName;
 
 
-   /* @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
-*/
-   private TestRole roles;
+    private Collection<Role> roles;
 
-    public TestRole getRoles() {
-        return roles;
-    }
-
-    public void setRoles(TestRole roles) {
-        this.roles = roles;
-    }
 /*@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "favourites", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "comic_id"))
     private List<Comic> favourites;*/
 
-
-
-    /*public User(User users) {
-
-            this.id = users.id;
-            this.email = users.email;
-            this.name = users.name;
-            this.lastName =users.lastName;
-            this.password = users.password;
-        }*/
     public User(String email, String password, String userName, String fullName){
         this.email = email;
         this.password = password;
@@ -100,14 +82,12 @@ public class User {
     public void setLastName(String lastName) {
         this.fullName = lastName;
     }
-
-
-  /*  public Set<Role> getRoles() {
+    public Collection<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(Collection<Role> roles) {
         this.roles = roles;
-    }*/
+    }
 
 }

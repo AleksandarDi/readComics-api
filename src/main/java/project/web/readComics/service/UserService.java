@@ -11,9 +11,8 @@ public interface UserService {
 
     List<User> getAllUsers();
 
-   // void AddFavourite(String user_id, String comic_id);
+    /*void AddFavourite(String user_id, String comic_id);
 
-    List<Comic> getAllFavourites(int id);
+    List<Comic> getAllFavourites(int id);*/
 
-    /*Set<Comic> getAllFavourites();*/
 }

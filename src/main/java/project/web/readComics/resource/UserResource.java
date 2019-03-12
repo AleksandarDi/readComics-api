@@ -41,10 +41,11 @@ public class UserResource {
           body.get("user_id"),
           body.get("comic_id")
         );
-    }*/
+    }
     @GetMapping("/potato/{id}")
     public List<Comic> getAllFavourites(@PathVariable("id") int id){
         return userServices.getAllFavourites(id);
     }
+    */
 
 }
