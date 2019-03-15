@@ -42,10 +42,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers("**/sign_up").permitAll()
-                .anyRequest().permitAll()
+                .antMatchers("**/sign_up","**/login").permitAll()
+                .anyRequest().authenticated()
                 .and()
-                .formLogin().permitAll()
-                .defaultSuccessUrl("http://localhost:3000/",true);
+                .formLogin().loginPage("localhost:3000/login").permitAll()
+                .defaultSuccessUrl("http://localhost:3000/home",true);
     }
 }
