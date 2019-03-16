@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import project.web.readComics.repository.UsersRepository;
 import project.web.readComics.service.VideoUserDetailsService;
 
@@ -32,6 +33,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(passwordEncoder());
     }
 
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -42,10 +44,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers("**/sign_up","**/login").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("**/sign_up","**/").permitAll()
+                .anyRequest().permitAll()
                 .and()
-                .formLogin().loginPage("localhost:3000/login").permitAll()
+                .formLogin().permitAll()
                 .defaultSuccessUrl("http://localhost:3000/home",true);
     }
 }
