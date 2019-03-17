@@ -11,9 +11,8 @@ import project.web.readComics.service.UserService;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserResource {
 
     private final UserService userServices;
@@ -33,6 +32,7 @@ public class UserResource {
                 body.get("fullName")
         );
     }
+
     @GetMapping("/user")
     public List<User> getUsers()
     {

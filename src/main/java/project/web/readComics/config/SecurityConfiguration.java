@@ -28,7 +28,6 @@ import project.web.readComics.service.VideoUserDetailsService;
 @EnableWebSecurity
 @EnableJpaRepositories(basePackageClasses = UsersRepository.class)
 @Configuration
-@EnableWebMvc
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -51,10 +50,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.cors().and().csrf().disable();
+        http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS, "**/sign_up","http://localhost:3000/login").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers(HttpMethod.OPTIONS, "http://localhost:8080/sign_up")
+                .authenticated()
+                .antMatchers(HttpMethod.OPTIONS, "http://localhost:3000/login").authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .formLogin().loginPage("http://localhost:3000/login").loginProcessingUrl("/login").permitAll()
                 .defaultSuccessUrl("http://localhost:3000/home",true);
