@@ -1,27 +1,30 @@
 package project.web.readComics.resource;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import project.web.readComics.model.Comic;
 import project.web.readComics.model.User;
 import project.web.readComics.service.UserService;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @CrossOrigin("*")
-@RequestMapping("/")
 @RestController
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserResource {
 
     private final UserService userServices;
 
+    @Autowired
     public UserResource(UserService userServices) {
         this.userServices = userServices;
     }
 
     @PostMapping("/sign_up")
+    @ResponseStatus(HttpStatus.CREATED)
     public void AddUser(@RequestBody Map<String,String> body) {
         userServices.AddUser(
                 body.get("email"),
