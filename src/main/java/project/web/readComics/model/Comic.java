@@ -1,8 +1,11 @@
 package project.web.readComics.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.sql.Blob;
+import java.util.Collection;
 
 @Entity
 @Table(name ="comic")
@@ -16,16 +19,24 @@ public class Comic {
     private String name;
     @Column(name="category")
     private String category;
+    @JsonIgnore
     @Column(name="comic_pdf")
     private Blob pdf;
+    @JsonIgnore
     @Column(name="comic_img")
     private Blob img;
+
+    @ManyToMany(mappedBy="favourites")
+    private Collection<User> users;
 
     public Comic(String name, String category, Blob pdf, Blob img) {
         this.name = name;
         this.category = category;
         this.pdf = pdf;
         this.img = img;
+    }
+    public Comic(){
+
     }
 
     public Blob getPdf() {

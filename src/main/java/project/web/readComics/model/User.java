@@ -1,6 +1,9 @@
 package project.web.readComics.model;
 
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Set;
@@ -28,9 +31,10 @@ public class User {
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<Role> roles;
 
-/*@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "favourites", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "comic_id"))
-    private List<Comic> favourites;*/
+    private Collection<Comic> favourites;
 
     public User(String email, String password, String userName, String fullName){
         this.email = email;
@@ -38,7 +42,6 @@ public class User {
         this.userName =  userName;
         this.fullName = fullName;
 
-      //  this.favourites = favourites;
     }
     public User(){
 
@@ -90,4 +93,11 @@ public class User {
         this.roles = roles;
     }
 
+    public Collection<Comic> getFavourites() {
+        return favourites;
+    }
+
+    public void setFavourites(Collection<Comic> favourites) {
+        this.favourites = favourites;
+    }
 }

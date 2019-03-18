@@ -2,16 +2,14 @@ package project.web.readComics.resource;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import project.web.readComics.model.Comic;
 import project.web.readComics.service.ComicService;
 
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin("*")
 @RestController
 public class ComicResource {
 
@@ -33,5 +31,9 @@ public class ComicResource {
         return comicService.getComicById(id);
     }
 
+    @GetMapping("/comic")
+    public List<Comic> getComics(){
+        return comicService.getAllComics();
+    };
 
 }

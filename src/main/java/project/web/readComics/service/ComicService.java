@@ -10,4 +10,6 @@ public interface ComicService {
     List<Comic> getComicByCategory(String category);
 
     Optional<Comic> getComicById(int id);
+
+    List<Comic> getAllComics();
 }

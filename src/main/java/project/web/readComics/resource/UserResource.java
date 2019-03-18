@@ -38,15 +38,19 @@ public class UserResource {
     {
         return userServices.getAllUsers();
     }
-
-    /*@PostMapping("/pota")
-    public void AddFavourite(@RequestBody Map<String,String> body){
-        userServices.AddFavourite(
-          body.get("user_id"),
-          body.get("comic_id")
-        );
+    @GetMapping("/user/{role}")
+    public List<User> getUserByRole(@PathVariable("role") String role){
+        return userServices.getUserByRole(role);
     }
-    @GetMapping("/potato/{id}")
+
+    @PostMapping("/favourite")
+    public void AddFavourite(@RequestBody Map<String,String> body) throws Exception {
+        userServices.AddFavourite(
+          Integer.parseInt(body.get("user_id")),
+          Integer.parseInt(body.get("comic_id"))
+        );
+    }/*
+    @GetMapping("/favourite/{id}")
     public List<Comic> getAllFavourites(@PathVariable("id") int id){
         return userServices.getAllFavourites(id);
     }

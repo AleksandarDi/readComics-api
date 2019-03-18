@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.web.readComics.model.Comic;
+import project.web.readComics.model.Role;
 import project.web.readComics.model.User;
 import project.web.readComics.repository.ComicsRepository;
 import project.web.readComics.repository.RolesRepository;
@@ -11,7 +12,9 @@ import project.web.readComics.repository.UsersRepository;
 import project.web.readComics.service.UserService;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -50,11 +53,23 @@ public class UserServiceImpl implements UserService {
         return repository.findAll();
     }
 
-   /* @Override
-    public void AddFavourite(String user_id, String comic_id){
+
+    @Override
+    public List<User> getUserByRole(String role){
+        Collection<Role> roles = Arrays.asList(rolesRepository.findByRole(role));
+        return repository.findByRoles(roles);
+    }
+    @Override
+    public void AddFavourite(int user_id, int comic_id) throws Exception{
+
+            User us = repository.findById(user_id).orElseThrow(Exception::new);
+            Collection<Comic> comics = us.getFavourites();
+            Comic com = rep.findById(comic_id).orElseThrow(Exception::new);
+            comics.add(com);
+            repository.save(us);
 
     }
-
+/*
     @Override
     public List<Comic> getAllFavourites(int id){
        return rep.getFavourites(id);

@@ -25,4 +25,9 @@ public class ComicServiceImpl implements ComicService {
     public Optional<Comic> getComicById(int id){
         return comicsRepository.findById(id);
     }
+
+    @Override
+    public List<Comic> getAllComics(){
+        return comicsRepository.findAll();
+    }
 }

@@ -11,8 +11,10 @@ public interface UserService {
 
     List<User> getAllUsers();
 
-    /*void AddFavourite(String user_id, String comic_id);
+    List<User> getUserByRole(String role);
 
+    void AddFavourite(int user_id, int comic_id) throws Exception;
+/*
     List<Comic> getAllFavourites(int id);*/
 
 }
