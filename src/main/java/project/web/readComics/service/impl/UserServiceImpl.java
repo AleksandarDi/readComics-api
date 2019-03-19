@@ -60,6 +60,18 @@ public class UserServiceImpl implements UserService {
         return repository.findByRoles(roles);
     }
     @Override
+    public void editUser(int id, String email, String password, String userName, String fullName) throws Exception {
+        User us = repository.findById(id).orElseThrow(Exception::new);
+        us.setEmail(email);
+        if(!password.equals("")) {
+            String p = passwordEncoder.encode(password);
+            us.setPassword(p);
+        }
+        us.setName(userName);
+        us.setLastName(fullName);
+        repository.save(us);
+    }
+    @Override
     public void AddFavourite(int user_id, int comic_id) throws Exception{
 
             User us = repository.findById(user_id).orElseThrow(Exception::new);
@@ -69,10 +81,39 @@ public class UserServiceImpl implements UserService {
             repository.save(us);
 
     }
-/*
     @Override
-    public List<Comic> getAllFavourites(int id){
-       return rep.getFavourites(id);
+    public void AddStillReading(int user_id, int comic_id) throws Exception{
+
+        User us = repository.findById(user_id).orElseThrow(Exception::new);
+        Collection<Comic> comics = us.getFavourites();
+        Comic com = rep.findById(comic_id).orElseThrow(Exception::new);
+        comics.add(com);
+        repository.save(us);
+
     }
-        */
+
+
+    @Override
+    public Collection<Comic> getAllFavourites(int id) throws Exception {
+        User us = repository.findById(id).orElseThrow(Exception::new);
+        return us.getFavourites();
+
+    }
+    @Override
+    public Collection<Comic> getAllStillReading(int id) throws Exception {
+        User us = repository.findById(id).orElseThrow(Exception::new);
+        return us.getStillReading();
+
+    }
+    @Override
+    public String Exists(String userName,String email){
+        //User us = repository.findByUserName(userName);
+        if(repository.existsByUserName(userName)){
+            return "Username already exists";
+        }
+        else if(repository.existsByEmail(email)){
+            return "Email already exists";
+        }
+        else return "Valid";
+    }
 }

@@ -36,6 +36,13 @@ public class User {
     @JoinTable(name = "favourites", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "comic_id"))
     private Collection<Comic> favourites;
 
+
+
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "still_reading", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "comic_id"))
+    private Collection<Comic> stillReading;
+
     public User(String email, String password, String userName, String fullName){
         this.email = email;
         this.password = password;
@@ -99,5 +106,13 @@ public class User {
 
     public void setFavourites(Collection<Comic> favourites) {
         this.favourites = favourites;
+    }
+
+    public Collection<Comic> getStillReading() {
+        return stillReading;
+    }
+
+    public void setStillReading(Collection<Comic> stillReading) {
+        this.stillReading = stillReading;
     }
 }

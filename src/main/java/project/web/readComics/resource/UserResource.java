@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import project.web.readComics.model.User;
 import project.web.readComics.service.UserService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -38,9 +39,27 @@ public class UserResource {
     {
         return userServices.getAllUsers();
     }
+
+    @PatchMapping("/user")
+    public void edtiUser(@RequestBody Map<String,String> body) throws Exception {
+        userServices.editUser(
+                Integer.parseInt(body.get("id")),
+                body.get("email"),
+                body.get("password"),
+                body.get("userName"),
+                body.get("fullName")
+        );
+
+    }
+
     @GetMapping("/user/{role}")
     public List<User> getUserByRole(@PathVariable("role") String role){
         return userServices.getUserByRole(role);
+    }
+
+    @GetMapping("/favourite/{id}")
+    public Collection<Comic> getAllFavourites(@PathVariable("id") int id) throws Exception {
+        return userServices.getAllFavourites(id);
     }
 
     @PostMapping("/favourite")
@@ -49,11 +68,26 @@ public class UserResource {
           Integer.parseInt(body.get("user_id")),
           Integer.parseInt(body.get("comic_id"))
         );
-    }/*
-    @GetMapping("/favourite/{id}")
-    public List<Comic> getAllFavourites(@PathVariable("id") int id){
-        return userServices.getAllFavourites(id);
     }
-    */
+
+    @GetMapping("/still_reading/{id}")
+    public Collection<Comic> getAllStillReading(@PathVariable("id") int id) throws Exception {
+        return userServices.getAllStillReading(id);
+    }
+
+    @PostMapping("/still_reading")
+    public void AddStillReading(@RequestBody Map<String,String> body) throws Exception{
+        userServices.AddStillReading(
+                Integer.parseInt(body.get("user_id")),
+                Integer.parseInt(body.get("comic_id"))
+        );
+    }
+    @PostMapping("/user/exists")
+    public String DoesItExist(@RequestBody Map<String,String> body){
+        return userServices.Exists(
+                body.get("userName"),
+                body.get("email")
+        );
+    }
 
 }
