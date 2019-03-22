@@ -48,7 +48,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("**/sign_up","**/").permitAll()
                 .anyRequest().permitAll()
                 .and()
-                .formLogin().loginPage("http://localhost:3000/login").loginProcessingUrl("/login").permitAll()
+                .formLogin()
+                .loginPage("http://localhost:3000/login")
+                .loginProcessingUrl("/login")
+                .failureUrl("http://localhost:3000/login/error")
+                .permitAll()
                 .defaultSuccessUrl("http://localhost:3000/home",true);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
