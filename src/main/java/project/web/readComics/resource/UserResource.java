@@ -41,7 +41,7 @@ public class UserResource {
     }
 
     @PatchMapping("/user")
-    public void edtiUser(@RequestBody Map<String,String> body) throws Exception {
+    public void editUser(@RequestBody Map<String,String> body) throws Exception {
         userServices.editUser(
                 Integer.parseInt(body.get("id")),
                 body.get("email"),
@@ -49,7 +49,6 @@ public class UserResource {
                 body.get("userName"),
                 body.get("fullName")
         );
-
     }
 
     @GetMapping("/user/{role}")

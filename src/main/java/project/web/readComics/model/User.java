@@ -77,20 +77,20 @@ public class User {
         this.password = password;
     }
 
-    public String getName() {
+    public String getUserName() {
         return userName;
     }
 
-    public void setName(String name) {
-        this.userName = name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public String getLastName() {
+    public String getFullName() {
         return fullName;
     }
 
-    public void setLastName(String lastName) {
-        this.fullName = lastName;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
     public Collection<Role> getRoles() {
         return roles;

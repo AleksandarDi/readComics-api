@@ -39,8 +39,8 @@ public class UserServiceImpl implements UserService {
             String p = passwordEncoder.encode(password);
             User u = new User();
             u.setEmail(email);
-            u.setName(userName);
-            u.setLastName(fullName);
+            u.setUserName(userName);
+            u.setFullName(fullName);
             u.setPassword(p);
             u.setRoles(Arrays.asList(rolesRepository.findByRole("User")));
             //User us = new User(email,p,userName,fullName);
@@ -67,8 +67,8 @@ public class UserServiceImpl implements UserService {
             String p = passwordEncoder.encode(password);
             us.setPassword(p);
         }
-        us.setName(userName);
-        us.setLastName(fullName);
+        us.setUserName(userName);
+        us.setFullName(fullName);
         repository.save(us);
     }
     @Override
