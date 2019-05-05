@@ -5,9 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import project.web.readComics.model.Comic;
 import project.web.readComics.model.User;
 import project.web.readComics.service.UserService;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.websocket.server.PathParam;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -81,11 +84,20 @@ public class UserResource {
                 Integer.parseInt(body.get("comic_id"))
         );
     }
-    @PostMapping("/user/exists")
-    public String DoesItExist(@RequestBody Map<String,String> body){
+
+    /*@PostMapping("/user/exists")
+    public String DoesItExist(@RequestBody Map<String,String> body, HttpServletResponse response){
         return userServices.Exists(
                 body.get("userName"),
                 body.get("email")
+        );
+    }*/
+
+    @GetMapping("/user/exists")
+    public String DoesItExist(@RequestParam("userName") String userName, @RequestParam("email") String email){
+        return userServices.Exists(
+                userName,
+                email
         );
     }
 
