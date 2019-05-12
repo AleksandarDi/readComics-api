@@ -61,12 +61,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.csrf().disable()
+        http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests()
-                .antMatchers("**/sign_up").permitAll()
+                .antMatchers("/sign_up").permitAll()
+                .antMatchers("/user/exists").permitAll()
                 .antMatchers("/login").permitAll()
                 .anyRequest().authenticated();
         
