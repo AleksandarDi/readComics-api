@@ -85,13 +85,6 @@ public class UserResource {
         );
     }
 
-    /*@PostMapping("/user/exists")
-    public String DoesItExist(@RequestBody Map<String,String> body, HttpServletResponse response){
-        return userServices.Exists(
-                body.get("userName"),
-                body.get("email")
-        );
-    }*/
 
     @GetMapping("/user/exists")
     public String DoesItExist(@RequestParam("userName") String userName, @RequestParam("email") String email){
