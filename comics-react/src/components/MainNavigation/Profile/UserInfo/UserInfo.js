@@ -1,6 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 import {getCurrentUser, updateUserInfo} from "../../../../repository/readComicsApi";
+import TextField from '@material-ui/core/TextField';
+import LoadingOverlay from 'react-loading-overlay';
+import PacmanLoader from 'react-spinners/PacmanLoader'
 
 
 class UserInfo extends Component {
@@ -17,7 +20,8 @@ class UserInfo extends Component {
             errorMsg: "Passwords do not match",
             successMsg: "User successfully updated",
             showSuccessMsg: false,
-            showErrorMsg: false
+            showErrorMsg: false,
+            isActive: true
         }
     }
 
@@ -30,7 +34,8 @@ class UserInfo extends Component {
                     username: data.username,
                     email: data.email,
                     showSuccessMsg: false,
-                    showErrorMsg: false
+                    showErrorMsg: false,
+                    isActive: false
                 })
             });
     }
@@ -95,8 +100,29 @@ class UserInfo extends Component {
 
 
     render() {
+
         return (
+            <LoadingOverlay
+                active={this.state.isActive}
+                styles={{
+                    overlay: {
+                        position: 'absolute',
+                        left: '50%',
+                        margin: '40px 0px 50px 0px',
+                        top: '40%',
+                        width: '1000px',
+                        height: '250px',
+
+                    },
+                    wrapper: {
+                        backgroundColor: this.state.isActive ? '#f0f0f0' : '',
+                        overflow: this.state.isActive ? 'hidden' : ''
+                    }
+                }}
+                spinner={<PacmanLoader color={'#288282'} />}
+            >
             <div className="col-lg-12 p-2 mx-auto">
+
                 <form className={"mr-5 ml-5 mb-5"}>
 
                     {
@@ -113,44 +139,71 @@ class UserInfo extends Component {
                             <strong>{this.state.errorMsg}</strong>
                         </div>
                     }
+
                     <div className={"row mt-3 ml-5 mr-5 justify-content-center"}>
                         <div className={"col-lg-4 m-4"}>
                             <div className="form-group col-lg-12 float-left-lg">
-                                <label htmlFor="fullname">Full name:</label>
-                                <input type="text" className="form-control" id="fullname" name={"fullname"}
-                                       placeholder={this.state.fullname}
-                                       onChange={n => this.changeFullName(n)} required/>
+                                <TextField
+                                    id="fullname"
+                                    label="Full Name"
+                                    className={"border-info"}
+                                    value={this.state.fullname}
+                                    margin="dense"
+                                    variant="outlined"
+                                    onChange={n => this.changeFullName(n)}
+                                />
                             </div>
 
                             <div className="form-group col-lg-12 float-left-lg">
-                                <label htmlFor="username">Username:</label>
-                                <input type="text" className="form-control" id="username" name={"username"}
-                                       placeholder={this.state.username}
-                                       onChange={n => this.changeUsername(n)} required/>
+                                <TextField
+                                    id="username"
+                                    label="Username"
+                                    value={this.state.username}
+                                    margin="dense"
+                                    variant="outlined"
+                                    className="border-info"
+                                    onChange={n => this.changeUsername(n)}
+                                />
                             </div>
 
                             <div className="form-group col-lg-12 float-left-lg">
-                                <label htmlFor="email">Email address:</label>
-                                <input type="email" className="form-control" id="email" name={"email"}
-                                       placeholder={this.state.email}
-                                       onChange={n => this.changeEmail(n)} required/>
+                                <TextField
+                                    id="email"
+                                    label="E-mail address:"
+                                    value={this.state.email}
+                                    margin="dense"
+                                    variant="outlined"
+                                    onChange={n => this.changeEmail(n)}
+                                />
                             </div>
                         </div>
 
                         <div className={"col-lg-4 m-4"}>
                             <div className="form-group col-lg-12 float-lg-right">
-                                <label htmlFor="pwd">Password:</label>
-                                <input type="password" placeholder={"Enter new password"} className="form-control" id="pwd" name={"pwd"}
-                                       onChange={n => this.changePassword(n)} required/>
+                                <TextField
+                                    id="pwd"
+                                    label="Password"
+                                    placeholder="Enter new password"
+                                    margin="dense"
+                                    variant="outlined"
+                                    onChange={n => this.changePassword(n)}
+                                />
                             </div>
 
                             <div className="form-group col-lg-12 float-lg-right">
-                                <label htmlFor="rpwd">Confirm password:</label>
-                                <input type="password" placeholder={"Re-enter new password"} className="form-control" id="rpwd" name={"rpwd"}
-                                       onChange={n => this.changeRePassword(n)} required/>
+                                <TextField
+                                    id="rpwd"
+                                    label="Confirm password"
+                                    placeholder="Re-enter new password"
+                                    margin="dense"
+                                    variant="outlined"
+                                    onChange={n => this.changeRePassword(n)}
+                                />
                             </div>
                         </div>
+
                     </div>
+
                     <div className="text-center">
                         <button type="submit" className="btn btn-info m-2" onClick={n => this.updateUserInfo(n)}>
                             Save
@@ -158,6 +211,7 @@ class UserInfo extends Component {
                     </div>
                 </form>
             </div>
+            </LoadingOverlay>
         )
     }
 

@@ -8,8 +8,8 @@ import {ACCESS_TOKEN, getCurrentUser} from '../../repository/readComicsApi';
 
 class MainNavigation extends Component {
 
-    constructor(props){
-        super(props);
+    constructor(props, nextState){
+        super(props, nextState);
         this.state = {
             component: "Dashboard",
             showDashboardFlag: true,
@@ -23,13 +23,14 @@ class MainNavigation extends Component {
         if(localStorage.getItem(ACCESS_TOKEN) == null){
             this.props.history.push('/login');
         }
-        else{
+        else {
             getCurrentUser()
                 .then((data) => {
                     sessionStorage.setItem("currentUser_id", data.id);
                 });
         }
     }
+
 
     showDashboard= () => {
         this.setState({
@@ -103,7 +104,7 @@ class MainNavigation extends Component {
 
                 <div className="col-lg-12 home-content bg-light">                    
                     {this.state.showDashboardFlag && <Dashboard dashboard = "Dashboard"/>}
-                    {this.state.showProfileFlag && <Profile profile="Profile" />}
+                    {this.state.showProfileFlag && <Profile profile="Profile"/>}
                     {this.state.showDiscoverFlag && <Discover discover="Discover"/>}
                 </div>
                 
