@@ -5,6 +5,7 @@ import project.web.readComics.model.Comic;
 import project.web.readComics.repository.ComicsRepository;
 import project.web.readComics.service.ComicService;
 
+import java.sql.Blob;
 import java.util.List;
 import java.util.Optional;
 

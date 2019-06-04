@@ -61,6 +61,7 @@ public class UserResource {
 
     @GetMapping("/favourite/{id}")
     public Collection<Comic> getAllFavourites(@PathVariable("id") int id) throws Exception {
+
         return userServices.getAllFavourites(id);
     }
 
@@ -72,10 +73,18 @@ public class UserResource {
         );
     }
 
+    @DeleteMapping("/favourite/delete")
+    public void DeleteFavourite(@RequestBody Map<String,String> body) throws Exception {
+
+        userServices.removeFavourite(Integer.parseInt(body.get("userId")),Integer.parseInt(body.get("comicId")));
+    }
+
     @GetMapping("/still_reading/{id}")
     public Collection<Comic> getAllStillReading(@PathVariable("id") int id) throws Exception {
         return userServices.getAllStillReading(id);
     }
+
+
 
     @PostMapping("/still_reading")
     public void AddStillReading(@RequestBody Map<String,String> body) throws Exception{

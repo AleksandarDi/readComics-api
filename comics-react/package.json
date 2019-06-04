@@ -1,5 +1,5 @@
 {
-  "name": "readcomics-react",
+  "name": "comics-react",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -24,7 +24,7 @@
     "react-fontawesome": "^1.6.1",
     "react-loading-overlay": "^1.0.1",
     "react-modal": "^3.8.1",
-    "react-pdf-js": "^4.0.2",
+    "react-pdf-js": "^4.2.3",
     "react-responsive-carousel": "^3.1.47",
     "react-router": "^5.0.0",
     "react-router-dom": "^4.3.1",

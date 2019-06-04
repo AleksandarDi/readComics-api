@@ -21,7 +21,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UsersRepository repository;
-    private final ComicsRepository rep;
+    private final ComicsRepository comicsRepository;
     private final RolesRepository rolesRepository;
 
 
@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
     public UserServiceImpl(UsersRepository repository, ComicsRepository rep, RolesRepository rolesRepository) {
         this.repository = repository;
-        this.rep = rep;
+        this.comicsRepository = rep;
         this.rolesRepository = rolesRepository;
     }
 
@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
 
             User us = repository.findById(user_id).orElseThrow(Exception::new);
             Collection<Comic> comics = us.getFavourites();
-            Comic com = rep.findById(comic_id).orElseThrow(Exception::new);
+            Comic com = comicsRepository.findById(comic_id).orElseThrow(Exception::new);
             comics.add(com);
             repository.save(us);
 
@@ -86,19 +86,31 @@ public class UserServiceImpl implements UserService {
 
         User us = repository.findById(user_id).orElseThrow(Exception::new);
         Collection<Comic> comics = us.getFavourites();
-        Comic com = rep.findById(comic_id).orElseThrow(Exception::new);
+        Comic com = comicsRepository.findById(comic_id).orElseThrow(Exception::new);
         comics.add(com);
         repository.save(us);
 
     }
 
-
     @Override
     public Collection<Comic> getAllFavourites(int id) throws Exception {
         User us = repository.findById(id).orElseThrow(Exception::new);
+
         return us.getFavourites();
 
     }
+
+    @Override
+    public void removeFavourite(int userId,int comicId) throws Exception{
+        User user = repository.findById(userId).orElseThrow(Exception::new);
+        Collection<Comic> favourites = user.getFavourites();
+        Comic comic = comicsRepository.findById(comicId).orElseThrow(Exception::new);
+        if(favourites.contains(comic)) {
+            favourites.remove(comic);
+        }
+        repository.save(user);
+    }
+
     @Override
     public Collection<Comic> getAllStillReading(int id) throws Exception {
         User us = repository.findById(id).orElseThrow(Exception::new);

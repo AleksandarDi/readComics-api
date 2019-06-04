@@ -4,7 +4,6 @@ package project.web.readComics.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.sql.Blob;
 import java.util.Collection;
 
 @Entity
@@ -15,21 +14,23 @@ public class Comic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="comic_id")
     private int id;
+
     @Column(name="comic_name")
     private String name;
+
     @Column(name="category")
     private String category;
-    @JsonIgnore
+
     @Column(name="comic_pdf")
-    private Blob pdf;
-    @JsonIgnore
+    private String pdf;
+
     @Column(name="comic_img")
-    private Blob img;
+    private String img;
 
     @ManyToMany(mappedBy="favourites")
     private Collection<User> users;
 
-    public Comic(String name, String category, Blob pdf, Blob img) {
+    public Comic(String name, String category, String pdf, String img) {
         this.name = name;
         this.category = category;
         this.pdf = pdf;
@@ -39,19 +40,19 @@ public class Comic {
 
     }
 
-    public Blob getPdf() {
+    public String getPdf() {
         return pdf;
     }
 
-    public void setPdf(Blob pdf) {
+    public void setPdf(String pdf) {
         this.pdf = pdf;
     }
 
-    public Blob getImg() {
+    public String getImg() {
         return img;
     }
 
-    public void setImg(Blob img) {
+    public void setImg(String img) {
         this.img = img;
     }
 

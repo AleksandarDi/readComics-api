@@ -93,3 +93,10 @@ export const updateUserInfo = (user) => {
         })
     });
 };
+
+export const getUserFavourites = (id) => {
+    return request({
+        url: "http://localhost:8080/favourite/"+id,
+        method: 'GET'
+        });
+};
