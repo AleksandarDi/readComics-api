@@ -4,11 +4,13 @@ import './Login.css';
 import logo from '../../repository/images/logo.png';
 import Modal from 'react-modal';
 import {ACCESS_TOKEN, createUser, doesUserExist, login} from '../../repository/readComicsApi';
+import TextField from '@material-ui/core/TextField';
+import isEmail from 'validator/lib/isEmail';
 
 const customStyles = {
     content: {
         height: '95%',
-        width: '50%',
+        width: '70%',
         top: '50%',
         left: '50%',
         right: 'auto',
@@ -18,11 +20,14 @@ const customStyles = {
     }
 };
 
+
 class LoginError extends Component {
 
     constructor(props, nextState){
         super(props, nextState)
         this.state = {
+            loginUsername: "",
+            loginPwd: "",
             email: "",
             errorMessage: "",
             username: "",
@@ -69,6 +74,14 @@ class LoginError extends Component {
         })
     }
 
+    changeLoginUsername(c) {
+        this.setState({ loginUsername: c.target.value });
+    }
+
+    changeLoginPwd(c) {
+        this.setState({ loginPwd: c.target.value });
+    }
+
     changeFullName = (n) => {
         this.setState({ fullname: n.target.value });
     }
@@ -91,10 +104,10 @@ class LoginError extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        console.log(this.state.pwd);
+
         let loginToken = {
-            username: this.state.username,
-            password: this.state.pwd
+            username: this.state.loginUsername,
+            password: this.state.loginPwd
         }
 
         login(loginToken)
@@ -147,6 +160,12 @@ class LoginError extends Component {
                             showErrorMsg: true
                         });
                     }
+                    else if(!isEmail(this.state.email)){
+                        this.setState({
+                            errorMessage: "Invalid email format.",
+                            showErrorMsg: true
+                        });
+                    }
                     else if(this.state.errorMessage !== "Valid"){
                         this.setState({
                             showErrorMsg: true
@@ -195,7 +214,7 @@ class LoginError extends Component {
                                                     <em className="text-center h3">Sign Up</em>
                                                 </div>
                                                 <div className="modal-body">
-                                                    <form>
+                                                    <form className="col-lg-12">
 
                                                         {
                                                             this.state.showErrorMsg &&
@@ -203,33 +222,74 @@ class LoginError extends Component {
                                                                 {this.state.errorMessage}
                                                             </div>
                                                         }
-                                                        <div className="form-group col-lg-5 mx-auto">
+                                                        <div className={"row mt-3 ml-5 mr-5 justify-content-center"}>
+                                                            <div className={"col-lg-5 m-4"}>
+                                                                <div className="form-group col-lg-12 mx-auto">
+                                                                    <TextField
+                                                                        id="email"
+                                                                        label="Email address"
+                                                                        className={"border-info"}
+                                                                        value={this.state.email}
+                                                                        margin="dense"
+                                                                        variant="outlined"
+                                                                        type="email"
+                                                                        onChange={n => this.changeEmail(n)}
+                                                                    />
+                                                                </div>
+                                                                <div className="form-group col-lg-12 mx-auto">
+                                                                    <TextField
+                                                                        id="fullname"
+                                                                        label="Full name"
+                                                                        className={"border-info"}
+                                                                        value={this.state.fullname}
+                                                                        margin="dense"
+                                                                        variant="outlined"
+                                                                        onChange={n => this.changeFullName(n)}
+                                                                    />
+                                                                </div>
+                                                                <div className="form-group col-lg-12 mx-auto">
+                                                                    <TextField
+                                                                        id="username"
+                                                                        label="Username"
+                                                                        className={"border-info"}
+                                                                        value={this.state.username}
+                                                                        margin="dense"
+                                                                        variant="outlined"
+                                                                        onChange={n => this.changeUsername(n)}
+                                                                    />
+                                                                </div>
+                                                            </div>
 
-                                                            <label for="email">Email address:</label>
-                                                            <input type="email" className="form-control" id="email" name={"email"} onChange={n => this.changeEmail(n)} required/>
-                                                        </div>
-                                                        <div className="form-group col-lg-5 mx-auto">
-                                                            <label for="fullname">Full name:</label>
-                                                            <input type="text" className="form-control" id="fullname" name={"fullname"} onChange={n => this.changeFullName(n)} required/>
-                                                        </div>
-                                                        <div className="form-group col-lg-5 mx-auto">
-                                                            <label for="username">Username:</label>
-                                                            <input type="text" className="form-control" id="username" name={"username"} onChange={n => this.changeUsername(n)} required/>
-                                                        </div>
-                                                        <div className="form-group col-lg-5 mx-auto">
-                                                            <label for="pwd">Password:</label>
-                                                            <input type="password" className="form-control" id="pwd" name={"pwd"} onChange={n => this.changePassword(n)} required/>
-                                                        </div>
-                                                        <div className="form-group col-lg-5 mx-auto">
-                                                            <label for="rpwd">Confirm password:</label>
-                                                            <input type="password" className="form-control" id="repwd" name={"repwd"} onChange={n => this.changeRePassword(n)} required />
-                                                        </div>
+                                                            <div className={"col-lg-5 m-4"}>
+                                                                <div className="form-group col-lg-12 mx-auto">
+                                                                    <TextField
+                                                                        id="pwd"
+                                                                        label="Password"
+                                                                        className={"border-info"}
+                                                                        margin="dense"
+                                                                        type="password"
+                                                                        variant="outlined"
+                                                                        onChange={n => this.changePassword(n)}
+                                                                    />
+                                                                </div>
+                                                                <div className="form-group col-lg-12 mx-auto">
+                                                                    <TextField
+                                                                        id="repwd"
+                                                                        label="Confirm password"
+                                                                        className={"border-info"}
+                                                                        margin="dense"
+                                                                        type="password"
+                                                                        variant="outlined"
+                                                                        onChange={n => this.changeRePassword(n)}
+                                                                    />
+                                                                </div>
+                                                            </div>
 
-                                                        <div className="text-center">
-                                                            <button type="submit" className="btn btn-info m-2" onClick={n => this.signUpUser(n)}>Submit</button>
-                                                            <button type="button" className="btn btn-danger m-2" onClick={this.closeModal}>Cancel</button>
+                                                            <div className="text-center">
+                                                                <button type="submit" className="btn btn-info m-2" onClick={n => this.signUpUser(n)}>Submit</button>
+                                                                <button type="button" className="btn btn-danger m-2" onClick={this.closeModal}>Cancel</button>
+                                                            </div>
                                                         </div>
-
                                                     </form>
                                                 </div>
 
@@ -260,10 +320,19 @@ class LoginError extends Component {
                                     </span>
                                 </div>
                                 <div className="form-group">
-                                    <input type="text" className="form-control mx-auto form-control-sm col-sm-8 bg-transparent border text-dark form-rounded" onChange={n => this.changeUsername(n)} placeholder={"Username"} name={"username"} />
+                                    <input type="text"
+                                           className="form-control mx-auto form-control-sm col-sm-8 bg-transparent border text-dark form-rounded"
+                                           onChange={n => this.changeLoginUsername(n)}
+                                           placeholder={"Username"}
+                                           name={"loginUsername"} />
                                 </div>
                                 <div className="form-group">
-                                    <input type="password" className="form-control mx-auto form-control-sm col-sm-8 border bg-transparent text-dark form-rounded" onChange={n => this.changePassword(n)} placeholder="Password" name={"password"} />
+                                    <input
+                                        type="password"
+                                        className="form-control mx-auto form-control-sm col-sm-8 border bg-transparent text-dark form-rounded"
+                                        onChange={n => this.changeLoginPwd(n)}
+                                        placeholder="Password"
+                                        name={"loginPwd"} />
                                 </div>
                                 <button type="submit" onClick={this.handleSubmit} className="btn border-info btn-sm mt-3 mb-5 text-info">Login</button>
                             </form>

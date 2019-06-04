@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import {getCurrentUser, updateUserInfo} from "../../../../repository/readComicsApi";
 import TextField from '@material-ui/core/TextField';
 import LoadingOverlay from 'react-loading-overlay';
-import PacmanLoader from 'react-spinners/PacmanLoader'
+import PacmanLoader from 'react-spinners/PacmanLoader';
+import isEmail from 'validator/lib/isEmail';
 
 
 class UserInfo extends Component {
@@ -80,18 +81,26 @@ class UserInfo extends Component {
             pwd: this.state.pwd
         }
         
-        if(this.state.pwd === this.state.rpwd) {
+        if(this.state.pwd !== this.state.rpwd) {
+            this.setState({
+                showSuccessMsg: false,
+                showErrorMsg: true,
+                errorMsg: "Passwords do not match"
+            });
+        }
+        else if(!isEmail(this.state.email)){
+            this.setState({
+                showSuccessMsg: false,
+                showErrorMsg: true,
+                errorMsg: "Invalid email format"
+            });
+        }
+        else{
             this.setState({
                 showSuccessMsg: true,
                 showErrorMsg: false
             });
             updateUserInfo(user);
-        }
-        else{
-            this.setState({
-                showSuccessMsg: false,
-                showErrorMsg: true
-            });
         }
 
 
@@ -186,6 +195,7 @@ class UserInfo extends Component {
                                     placeholder="Enter new password"
                                     margin="dense"
                                     variant="outlined"
+                                    type="password"
                                     onChange={n => this.changePassword(n)}
                                 />
                             </div>
@@ -196,6 +206,7 @@ class UserInfo extends Component {
                                     label="Confirm password"
                                     placeholder="Re-enter new password"
                                     margin="dense"
+                                    type="password"
                                     variant="outlined"
                                     onChange={n => this.changeRePassword(n)}
                                 />
