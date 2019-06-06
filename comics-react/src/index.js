@@ -8,6 +8,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
 import 'font-awesome/less/font-awesome.less';
 
+import 'semantic-ui-css/semantic.min.css';
+
 import { Router } from 'react-router-dom';
 import createBrowserHistory from "history/createBrowserHistory";
 

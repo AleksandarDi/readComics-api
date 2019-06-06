@@ -63,15 +63,16 @@ class Dashboard extends Component {
         if(this.state.comics !== null) {
             var size = 3;
             var comics = this.state.comics.slice(0, size).map((comic, i) => (
-                <li className="list-inline-item ml-4 mr-4 col-lg-3" key={i}>
-                    <div className="block">
-                        <img
-                            className="img-thumbnail h-auto w-100"
-                            style={{width: 'auto', height: '100px'}}
-                            src={process.env.PUBLIC_URL + comic.img}
-                            alt={comic.name}/>
-                        {/*<div className="text-muted m-1 text-center">{comic.name}</div>*/}
-                    </div>
+                <li className="list-inline-item" key={i}>
+                        <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
+                            <img
+                                className="figure-img img-thumbnail rounded shadow"
+                                style={{height: "300px", width: "auto"}}
+                                src={process.env.PUBLIC_URL + comic.img}
+                                alt={comic.name}/>
+                            <figcaption className="figure-caption font-weight-bold text-center">{comic.name}</figcaption>
+                        </figure>
+
                 </li>
             ))
         }

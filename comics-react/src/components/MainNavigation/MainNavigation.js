@@ -74,7 +74,7 @@ class MainNavigation extends Component {
 
         return (
 
-            <div>
+            <div className="bg-light vh-100">
                 <div className="wrapper">
 
                     <nav id="sidebar" className="text-light p-2">
@@ -113,7 +113,7 @@ class MainNavigation extends Component {
                     </nav>
                 </div>
 
-                <div className="col-lg-12 home-content bg-light">                    
+                <div className="col-lg-12 home-content">
                     {this.state.showDashboardFlag && <Dashboard dashboard = "Dashboard"/>}
                     {this.state.showProfileFlag && <Profile profile="Profile"/>}
                     {this.state.showDiscoverFlag && <Discover discover="Discover"/>}

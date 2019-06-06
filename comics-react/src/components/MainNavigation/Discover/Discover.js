@@ -3,13 +3,13 @@ import React, { Component } from 'react';
 import {ACCESS_TOKEN} from "../../../repository/readComicsApi";
 import Button from '@material-ui/core/Button';
 import ComicsByCategory from "./ComicsByCategory/ComicsByCategory";
-import Select from "react-select";
-
+import { Dropdown } from 'semantic-ui-react'
 
 const categories = [
-    { label: "Marvel", value: 0 },
-    { label: "DC", value: 1 },
-    { label: "Archie", value: 2 }
+    { key: 'marvel', text: 'Marvel Comics', value: 'Marvel' },
+    { key: 'dc', text: 'DC Comics', value: 'DC' },
+    { key: 'archie', text: 'Archie Comics', value: 'Archie' },
+
 ];
 
 class Discover extends Component {
@@ -39,12 +39,13 @@ class Discover extends Component {
         window.location.reload()
     };
 
-    changeCategory = (category) => {
+    changeCategory = (event, {value}) => {
         this.setState({
-            category
+            category: value
         })
-        console.log(category.label)
-        sessionStorage.setItem("cat", category.label)
+        console.log(value)
+        sessionStorage.setItem("cat", value)
+        window.location.reload()
     };
 
     render() {
@@ -66,19 +67,15 @@ class Discover extends Component {
                 </div>
                 <hr className="bg-light"/>
 
-                <div className="container mt-5">
-                    <form className="form form-inline m-2" noValidate autoComplete="off">
-                    <div className="form-group col-lg-12">
-                        <Select
-                            className={"col-lg-4 float-right"}
-                            name = "Categories"
-                            options = {categories}
-                            onChange={this.changeCategory.bind(this)}
-                            defaultValue={categories.filter(option => option.label === this.state.category)}
-                        />
-                    </div>
-                        <button type="submit" className="btn btn-primary mx-auto text-center">Submit</button>
-                    </form>
+                <div className="container m-5">
+                    <Dropdown
+                        className="mx-auto col-lg-3"
+                        fluid
+                        selection
+                        defaultValue={this.state.category}
+                        options={categories}
+                        onChange={this.changeCategory.bind(this)}/>
+
                     <ComicsByCategory comics="Comics" category={this.state.category}/>
                 </div>
             </div>
