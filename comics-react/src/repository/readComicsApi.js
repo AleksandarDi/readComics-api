@@ -100,3 +100,17 @@ export const getUserFavourites = (id) => {
         method: 'GET'
         });
 };
+
+export const getComics = () => {
+    return request({
+        url: "http://localhost:8080/comic/",
+        method: 'GET'
+    });
+};
+
+export const getComicsByCategory = (category) => {
+    return request({
+        url: "http://localhost:8080/"+category,
+        method: 'GET'
+    });
+};

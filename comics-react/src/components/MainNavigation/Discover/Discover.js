@@ -1,29 +1,51 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
-import Categories from './Categories/Categories';
-import ComicsByCategory from './ComicsByCategory/ComicsByCategory';
 import {ACCESS_TOKEN} from "../../../repository/readComicsApi";
-
 import Button from '@material-ui/core/Button';
+import ComicsByCategory from "./ComicsByCategory/ComicsByCategory";
+import Select from "react-select";
+
+
+const categories = [
+    { label: "Marvel", value: 0 },
+    { label: "DC", value: 1 },
+    { label: "Archie", value: 2 }
+];
+
 class Discover extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-
             component: "Discover",
-            showCategoriesFlag: true,
-            showComicsByCategoryFlag: false
+            category: "Marvel"
+        }
+        sessionStorage.setItem("active", "Discover")
+    }
 
+    componentWillMount(){
+        if(sessionStorage.getItem("cat") !== null){
+            this.setState({
+                category: sessionStorage.getItem("cat")
+            })
         }
     }
 
     signOut = (s) =>{
-        s.preventDefault()
-        localStorage.removeItem(ACCESS_TOKEN)
+        s.preventDefault();
+        localStorage.removeItem(ACCESS_TOKEN);
         sessionStorage.removeItem("currentUser_id");
+        sessionStorage.removeItem("active")
         window.location.reload()
-    }
+    };
+
+    changeCategory = (category) => {
+        this.setState({
+            category
+        })
+        console.log(category.label)
+        sessionStorage.setItem("cat", category.label)
+    };
 
     render() {
         return (
@@ -42,18 +64,23 @@ class Discover extends Component {
                         </Button>
                     </div>
                 </div>
-                <hr className="bg-light"></hr>
+                <hr className="bg-light"/>
 
-                {
-                    this.state.showCategoriesFlag && 
-                        <Categories categories="Categories"/>
-                }
-
-                {
-                    this.state.showComicsByCategoryFlag && 
-                        <ComicsByCategory comics="Comics"/>
-                }
-
+                <div className="container mt-5">
+                    <form className="form form-inline m-2" noValidate autoComplete="off">
+                    <div className="form-group col-lg-12">
+                        <Select
+                            className={"col-lg-4 float-right"}
+                            name = "Categories"
+                            options = {categories}
+                            onChange={this.changeCategory.bind(this)}
+                            defaultValue={categories.filter(option => option.label === this.state.category)}
+                        />
+                    </div>
+                        <button type="submit" className="btn btn-primary mx-auto text-center">Submit</button>
+                    </form>
+                    <ComicsByCategory comics="Comics" category={this.state.category}/>
+                </div>
             </div>
         )
     }

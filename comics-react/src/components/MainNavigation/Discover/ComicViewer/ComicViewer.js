@@ -1,87 +1,173 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
+import React, {Component} from 'react';
+
 import PDF from 'react-pdf-js';
-import test from './test.pdf';
+import {getUserFavourites} from "../../../../repository/readComicsApi";
+import LoadingOverlay from "react-loading-overlay";
+import {PacmanLoader} from "react-spinners";
+import Modal from "react-modal";
 
-class ComicViewer extends React.Component {
-    
-    state = {};
+const customStyles = {
+    content: {
+        height: '95%',
+        width: '75%',
+        top: '50%',
+        left: '60%',
+        right: '10%',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)'
+    }
+};
 
-    onDocumentComplete = (pages) => {
-        this.setState({ 
-            flagLast: false,
-            pageOne: 1, 
-            pageTwo: 2, 
-            pages });
+class ComicViewer extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            favourites: null,
+            component: "Dashboard",
+            showPersonalInfoFlag: true,
+            showComicsFlag: false,
+            isLoading: true,
+            modalIsOpen: false,
+            pageOne: 1,
+            pageTwo: 2
+        }
+
+        this.openModal = this.openModal.bind(this);
+        this.closeModal = this.closeModal.bind(this);
     }
 
-    handlePrevious = () => {
-        this.setState({ 
-            pageOne: this.state.pageOne - 2,
-            pageTwo: this.state.pageTwo - 2,
-            flagLast: false
+
+    componentWillMount() {
+        getUserFavourites(sessionStorage.getItem("currentUser_id")).then((data) => {
+            console.log(data);
+            this.setState({
+                favourites: data,
+                isLoading: false
+            })
+        })
+    }
+
+
+    openModal() {
+        this.setState({modalIsOpen: true});
+    }
+
+    closeModal() {
+        this.setState({
+            modalIsOpen: false,
         });
     }
 
-    handleNext = () => {
-        if (this.state.pageTwo + 2 > this.state.pages){
-            this.setState({
-                pageOne: this.state.pageOne + 2,
-                pageTwo: this.state.pages,
-                flagLast: true
-            });    
-        }
-        else{
-            this.setState({
-                pageOne: this.state.pageOne + 2,
-                pageTwo: this.state.pageTwo + 2,
-                flagLast: false
-            });
+    onDocumentComplete = (pages) => {
+        console.log();
+        this.setState({
+            flagLast: false,
+            pageOne: 1,
+            pageTwo: 2,
+            pages
+        });
+    };
 
-        }
-        
-    }
+    handlePrevious = () => {
+        this.setState({
+            pageOne: this.state.pageOne - 1,
+            flagLast: false
+        });
+    };
+
+    handleNext = () => {
+        this.setState({
+            pageOne: this.state.pageOne + 1,
+            flagLast: false
+        });
+
+
+    };
 
     renderPagination = (pageOne, pageTwo, pages) => {
+        console.log("yes");
         let previousButton = null;
         if (pageOne > 1) {
-            previousButton = <button className="btn previous" onClick={this.handlePrevious}><a href="#"><i className="fa fa-arrow-left"></i> Previous</a></button>;
+            previousButton =
+                <button
+                    className="btn btn-outline-dark float-left previous"
+                    onClick={this.handlePrevious}>
+                    <i className="fa fa-arrow-left"/>
+                </button>;
         }
         let nextButton = null;
-        if (pageTwo < pages) {
-            nextButton = <button className="btn next" onClick={this.handleNext}><a href="#">Next <i className="fa fa-arrow-right"></i></a></button>;
+        if (pageOne < pages) {
+            nextButton =
+                <button
+                    className="btn btn-outline-dark float-right next"
+                    onClick={this.handleNext}>
+                    <i className="fa fa-arrow-right"/>
+                </button>;
         }
         return (
             <span>
                 {previousButton} {nextButton}
             </span>
         );
-    }
+    };
+
 
     render() {
+        if (this.state.isLoading) {
+            return (<LoadingOverlay
+                active={this.state.isActive}
+                styles={{
+                    overlay: {
+                        position: 'absolute',
+                        left: '50%',
+                        margin: '40px 0px 50px 0px',
+                        top: '40%',
+                        width: '1000px',
+                        height: '250px',
+                    },
+                    wrapper: {
+                        backgroundColor: this.state.isActive ? '#f0f0f0' : '',
+                        overflow: this.state.isActive ? 'hidden' : ''
+                    }
+                }}
+                spinner={<PacmanLoader color={'#288282'}/>}
+            />)
+        }
         let pagination = null;
         if (this.state.pages) {
+
             pagination = this.renderPagination(this.state.pageOne, this.state.pageTwo, this.state.pages);
         }
         return (
-            <div className="justify-content-center mx-auto text-center">
-                <div className="container col-lg-12">
-                    <PDF
-                        file={test}
-                        onDocumentComplete={this.onDocumentComplete}
-                        page={this.state.pageOne}
-                    />
+            <div className="col-lg-9 p-2">
+                <Modal
+                    isOpen={this.state.modalIsOpen}
+                    onRequestClose={this.closeModal}
+                    style={customStyles}
+                    contentLabel="Sign up">
 
-                    {!this.state.flagLast && <PDF
-                        file={test}
-                        onDocumentComplete={this.onDocumentComplete}
-                        page={this.state.pageTwo}
-                    />}
-                </div>
-                {pagination}
+                    <div className="modal-body">
+                        <div className="text-center sticky-top">
+                            {pagination}
+                        </div>
+                        <div className="container mx-auto text-center col-lg-10">
+                            <PDF
+                                className="col-lg-11"
+                                file={process.env.PUBLIC_URL + '/comics/Marvel/SecretEmpireUprising00120.pdf'}
+                                onDocumentComplete={this.onDocumentComplete}
+                                page={this.state.pageOne}
+                            />
+                        </div>
+
+                    </div>
+
+                </Modal>
+
             </div>
         )
     }
 }
-
 export default ComicViewer;

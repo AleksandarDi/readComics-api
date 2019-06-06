@@ -44,7 +44,7 @@ class Login extends Component {
         this.closeModal = this.closeModal.bind(this);
     }
 
-    componentDidMount(){
+    componentWillMount(){
         if(localStorage.getItem(ACCESS_TOKEN) != null){
             console.log('token', localStorage.getItem(ACCESS_TOKEN));
             this.props.history.push('/home');

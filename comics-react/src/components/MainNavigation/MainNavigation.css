@@ -16,6 +16,7 @@
 
 .active-item{
     background-color: rgba(6, 153, 141, 0.3);
+    background-size: 100%;
     font-weight: 500;
     border-radius: 5px;
 }

@@ -15,6 +15,7 @@ class Profile extends Component {
             showPersonalInfoFlag: true,
             showComicsFlag: false,
         }
+        sessionStorage.setItem("active", "Profile")
     }
 
     componentDidMount(){
@@ -42,6 +43,7 @@ class Profile extends Component {
         s.preventDefault()
         localStorage.removeItem(ACCESS_TOKEN)
         sessionStorage.removeItem("currentUser_id");
+        sessionStorage.removeItem("active");
         window.location.reload()
     }
 

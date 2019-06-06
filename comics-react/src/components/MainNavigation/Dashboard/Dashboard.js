@@ -1,9 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 import Carousel from 'react-bootstrap/Carousel';
-import {ACCESS_TOKEN} from "../../../repository/readComicsApi";
+import {ACCESS_TOKEN, getComics} from "../../../repository/readComicsApi";
 
 import Button from '@material-ui/core/Button';
+import LoadingOverlay from "react-loading-overlay";
+import PacmanLoader from 'react-spinners/PacmanLoader';
 /*
 <div className="col-lg-12">
 
@@ -26,25 +28,53 @@ class Dashboard extends Component {
         this.state = {
 
             component: "Dashboard",
+            comics: null,
 
             // need a count service for ContinueReading
             showContinueReadingFlag: false,
 
             // need a count service for SavedComics
-            showSavedFlag: false
-
+            showSavedFlag: false,
+            isActive: true
         }
+        sessionStorage.setItem("active", "Dashboard")
+    }
+
+    componentWillMount(){
+        getComics().then((data) =>{
+            console.log(data);
+            this.setState({
+                comics: data,
+                isActive: false
+            })
+        })
     }
 
     signOut = (s) =>{
         s.preventDefault()
         localStorage.removeItem(ACCESS_TOKEN)
         sessionStorage.removeItem("currentUser_id");
+        sessionStorage.removeItem("active");
         window.location.reload()
     }
 
     render() {
 
+        if(this.state.comics !== null) {
+            var size = 3;
+            var comics = this.state.comics.slice(0, size).map((comic, i) => (
+                <li className="list-inline-item ml-4 mr-4 col-lg-3" key={i}>
+                    <div className="block">
+                        <img
+                            className="img-thumbnail h-auto w-100"
+                            style={{width: 'auto', height: '100px'}}
+                            src={process.env.PUBLIC_URL + comic.img}
+                            alt={comic.name}/>
+                        {/*<div className="text-muted m-1 text-center">{comic.name}</div>*/}
+                    </div>
+                </li>
+            ))
+        }
         return (
             <div className="col-lg-9 p-2">
                 <div className="row">
@@ -61,7 +91,7 @@ class Dashboard extends Component {
                         </Button>
                     </div>
                 </div>
-                <hr className="bg-light"></hr>
+                <hr className="bg-light"/>
                 
 
                 <div className="container mt-5">
@@ -74,16 +104,9 @@ class Dashboard extends Component {
                                 <i className="fa fa-paper-plane text-warning" />  Continue reading
                             </div>
                             <div className="card-body">
+                                <ul className="list-inline text-center col-lg-12">
 
-                                <Carousel>
-                                    <Carousel.Item>
-                                        {/* 
-                                            need an image from the database
-                                        */}
-                                    </Carousel.Item>
-                                    
-                                </Carousel>
-                            
+                                </ul>
                             </div>
                         </div>
                     }
@@ -96,21 +119,48 @@ class Dashboard extends Component {
                                 <i className="fa fa-heart text-danger" />  Saved
                             </div>
                             <div className="card-body">
+                                <ul className="list-inline text-center col-lg-12">
 
+                                </ul>
                             </div>
                         </div>
                     }
 
-                
-                    <div className="card m-4">
-                        <div className="h5 card-title m-4 font-weight-light">
-                            <i className="fa fa-compass text-success"/>  What's new?
-                        </div>
-                        <div className="card-body">
+                    <LoadingOverlay
+                        active={this.state.isActive}
+                        styles={{
+                            overlay: {
+                                position: 'absolute',
+                                left: '50%',
+                                margin: '40px 0px 50px 0px',
+                                top: this.state.isActive ? '100%' : '',
+                                width: '1000px',
+                                height: '250px'
+                            },
+                            wrapper: {
+                                backgroundColor: this.state.isActive ? '#f8f9fa' : '',
+                                overflow: 'hidden'
 
+                            }
+                        }}
+                        spinner={<PacmanLoader color={'#288282'} />}
+                    >
+
+                        <div className="col-lg-12 p-2 mx-auto">
+                            {!this.state.isActive &&
+                            <div className="card m-4">
+                                <div className="h5 card-title m-4 font-weight-light">
+                                    <i className="fa fa-compass text-success"/> What's new?
+                                </div>
+                                <div className="card-body">
+                                    <ul className="list-inline text-center col-lg-12">
+                                        {comics}
+                                    </ul>
+                                </div>
+                            </div>
+                            }
                         </div>
-                    </div>
-                    
+                    </LoadingOverlay>
                 </div>
             </div>
         )

@@ -18,8 +18,7 @@ class MainNavigation extends Component {
         }
     }
 
-    componentDidMount(){
-        //console.log('homeToken', localStorage.getItem(ACCESS_TOKEN));
+    componentWillMount(){
         if(localStorage.getItem(ACCESS_TOKEN) == null){
             this.props.history.push('/login');
         }
@@ -28,7 +27,19 @@ class MainNavigation extends Component {
                 .then((data) => {
                     sessionStorage.setItem("currentUser_id", data.id);
                 });
+            if(sessionStorage.getItem("active") !== null){
+                if(sessionStorage.getItem("active") === "Dashboard"){
+                    this.showDashboard()
+                }
+                else if(sessionStorage.getItem("active") === "Profile"){
+                    this.showProfile()
+                }
+                else if(sessionStorage.getItem("active") === "Discover"){
+                    this.showDiscover()
+                }
+            }
         }
+
     }
 
 
