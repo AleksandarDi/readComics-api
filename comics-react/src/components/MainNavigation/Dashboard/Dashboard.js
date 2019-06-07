@@ -37,7 +37,8 @@ class Dashboard extends Component {
             showSavedFlag: false,
             isActive: true
         }
-        sessionStorage.setItem("active", "Dashboard")
+        sessionStorage.setItem("active", "Dashboard");
+        sessionStorage.setItem("profile_tabs", "info");
     }
 
     componentWillMount(){
@@ -55,6 +56,7 @@ class Dashboard extends Component {
         localStorage.removeItem(ACCESS_TOKEN)
         sessionStorage.removeItem("currentUser_id");
         sessionStorage.removeItem("active");
+        sessionStorage.removeItem("profile_tabs");
         window.location.reload()
     }
 

@@ -114,3 +114,31 @@ export const getComicsByCategory = (category) => {
         method: 'GET'
     });
 };
+
+export const getComicsByID = (id) => {
+    return request({
+        url: "http://localhost:8080/comic/"+id,
+        method: 'GET'
+    });
+};
+
+export const removeFavoriteFromUser = (user, comic) => {
+
+    const headers = new Headers({
+        'Content-Type': 'application/json',
+    })
+
+    if(localStorage.getItem(ACCESS_TOKEN)) {
+        headers.append('Authorization', 'Bearer ' + localStorage.getItem(ACCESS_TOKEN))
+    }
+
+    return fetch("http://localhost:8080/favourite/delete", {
+        method: 'DELETE',
+        headers: headers,
+        body: JSON.stringify({
+            userId: user,
+            comicId: comic
+        })
+    });
+};
+

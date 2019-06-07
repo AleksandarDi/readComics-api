@@ -18,11 +18,24 @@ class Profile extends Component {
         sessionStorage.setItem("active", "Profile")
     }
 
-    componentDidMount(){
-
+    componentWillMount(){
         sessionStorage.setItem("successMsg", "false");
         sessionStorage.setItem("errorMsg", "false");
 
+        if(sessionStorage.getItem("profile_tabs") !== null){
+            if(sessionStorage.getItem("profile_tabs") === "info"){
+                this.setState({
+                    showPersonalInfoFlag: true,
+                    showComicsFlag: false
+                })
+            }
+            else{
+                this.setState({
+                    showPersonalInfoFlag: false,
+                    showComicsFlag: true
+                })
+            }
+        }
     }
 
     showPersonalInfo = () =>{
@@ -30,6 +43,7 @@ class Profile extends Component {
             showPersonalInfoFlag: true,
             showComicsFlag: false
         })
+        sessionStorage.setItem("profile_tabs", "info")
     }
 
     showComics = () =>{
@@ -37,6 +51,7 @@ class Profile extends Component {
             showPersonalInfoFlag: false,
             showComicsFlag: true
         })
+        sessionStorage.setItem("profile_tabs", "comics")
     }
 
     signOut = (s) =>{
@@ -44,6 +59,7 @@ class Profile extends Component {
         localStorage.removeItem(ACCESS_TOKEN)
         sessionStorage.removeItem("currentUser_id");
         sessionStorage.removeItem("active");
+        sessionStorage.removeItem("profile_tabs");
         window.location.reload()
     }
 

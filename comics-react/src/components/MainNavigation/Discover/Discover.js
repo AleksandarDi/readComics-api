@@ -20,7 +20,8 @@ class Discover extends Component {
             component: "Discover",
             category: "Marvel"
         }
-        sessionStorage.setItem("active", "Discover")
+        sessionStorage.setItem("active", "Discover");
+        sessionStorage.setItem("profile_tabs", "info");
     }
 
     componentWillMount(){
@@ -35,7 +36,8 @@ class Discover extends Component {
         s.preventDefault();
         localStorage.removeItem(ACCESS_TOKEN);
         sessionStorage.removeItem("currentUser_id");
-        sessionStorage.removeItem("active")
+        sessionStorage.removeItem("active");
+        sessionStorage.removeItem("profile_tabs");
         window.location.reload()
     };
 

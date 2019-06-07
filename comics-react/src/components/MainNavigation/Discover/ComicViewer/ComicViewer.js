@@ -1,64 +1,29 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {Component} from 'react';
-
+import { Icon, Button } from 'semantic-ui-react';
 import PDF from 'react-pdf-js';
-import {getUserFavourites} from "../../../../repository/readComicsApi";
+import {getComicsByID} from "../../../../repository/readComicsApi";
 import LoadingOverlay from "react-loading-overlay";
 import {PacmanLoader} from "react-spinners";
-import Modal from "react-modal";
-
-const customStyles = {
-    content: {
-        height: '95%',
-        width: '75%',
-        top: '50%',
-        left: '60%',
-        right: '10%',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)'
-    }
-};
 
 class ComicViewer extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            favourites: null,
-            component: "Dashboard",
-            showPersonalInfoFlag: true,
-            showComicsFlag: false,
+            comic: "",
             isLoading: true,
-            modalIsOpen: false,
-            pageOne: 1,
-            pageTwo: 2
+            pageOne: 1
         }
-
-        this.openModal = this.openModal.bind(this);
-        this.closeModal = this.closeModal.bind(this);
     }
-
 
     componentWillMount() {
-        getUserFavourites(sessionStorage.getItem("currentUser_id")).then((data) => {
-            console.log(data);
+        getComicsByID(this.props.id).then((data) => {
             this.setState({
-                favourites: data,
+                comic: data,
                 isLoading: false
-            })
+            });
         })
-    }
-
-
-    openModal() {
-        this.setState({modalIsOpen: true});
-    }
-
-    closeModal() {
-        this.setState({
-            modalIsOpen: false,
-        });
     }
 
     onDocumentComplete = (pages) => {
@@ -142,30 +107,46 @@ class ComicViewer extends Component {
             pagination = this.renderPagination(this.state.pageOne, this.state.pageTwo, this.state.pages);
         }
         return (
-            <div className="col-lg-9 p-2">
-                <Modal
-                    isOpen={this.state.modalIsOpen}
-                    onRequestClose={this.closeModal}
-                    style={customStyles}
-                    contentLabel="Sign up">
-
-                    <div className="modal-body">
-                        <div className="text-center sticky-top">
-                            {pagination}
-                        </div>
-                        <div className="container mx-auto text-center col-lg-10">
-                            <PDF
-                                className="col-lg-11"
-                                file={process.env.PUBLIC_URL + '/comics/Marvel/SecretEmpireUprising00120.pdf'}
-                                onDocumentComplete={this.onDocumentComplete}
-                                page={this.state.pageOne}
-                            />
-                        </div>
-
+            <div>
+                <div className="modal-header">
+                    <Button.Group className="text-center mx-auto">
+                        <Button
+                            basic color='black'
+                            animated="vertical">
+                            <Button.Content hidden>Save</Button.Content>
+                            <Button.Content visible>
+                                <Icon
+                                    className={"text-dark text-center h-25 w-25"}
+                                    name="bookmark outline"/>
+                            </Button.Content>
+                        </Button>
+                        <Button
+                            onClick={this.props.close}
+                            basic color='black'
+                            animated="vertical">
+                            <Button.Content hidden>Close</Button.Content>
+                            <Button.Content visible>
+                                <Icon
+                                    className={"text-dark text-center h-25 w-25"}
+                                    name="remove"/>
+                            </Button.Content>
+                        </Button>
+                    </Button.Group>
+                </div>
+                <div className="modal-body">
+                    <div className="text-center sticky-top">
+                        {pagination}
+                    </div>
+                    <div className="container mx-auto text-center col-lg-10">
+                        <PDF
+                            className="col-lg-11"
+                            file={process.env.PUBLIC_URL + this.state.comic.pdf}
+                            onDocumentComplete={this.onDocumentComplete}
+                            page={this.state.pageOne}
+                        />
                     </div>
 
-                </Modal>
-
+                </div>
             </div>
         )
     }
