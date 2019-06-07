@@ -94,6 +94,33 @@ public class UserResource {
         );
     }
 
+    @DeleteMapping("/still_reading/delete")
+    public void DeleteStillReading(@RequestBody Map<String,String> body) throws Exception {
+
+        userServices.removeStillReading(Integer.parseInt(body.get("userId")),Integer.parseInt(body.get("comicId")));
+    }
+
+    @GetMapping("/saved/{id}")
+    public Collection<Comic> getAllSaved(@PathVariable("id") int id) throws Exception {
+        return userServices.getAllSaved(id);
+    }
+
+
+
+    @PostMapping("/saved")
+    public void AddSaved(@RequestBody Map<String,String> body) throws Exception{
+        userServices.AddSaved(
+                Integer.parseInt(body.get("user_id")),
+                Integer.parseInt(body.get("comic_id"))
+        );
+    }
+
+    @DeleteMapping("/saved/delete")
+    public void DeleteSaved(@RequestBody Map<String,String> body) throws Exception {
+
+        userServices.removeSaved(Integer.parseInt(body.get("userId")),Integer.parseInt(body.get("comicId")));
+    }
+
 
     @GetMapping("/user/exists")
     public String DoesItExist(@RequestParam("userName") String userName, @RequestParam("email") String email){

@@ -36,6 +36,10 @@ public class User {
     @JoinTable(name = "favourites", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "comic_id"))
     private Collection<Comic> favourites;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "saved", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "comic_id"))
+    private Collection<Comic> saved;
 
 
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -107,6 +111,15 @@ public class User {
     public void setFavourites(Collection<Comic> favourites) {
         this.favourites = favourites;
     }
+
+    public Collection<Comic> getSaved() {
+        return saved;
+    }
+
+    public void setSaved(Collection<Comic> saved) {
+        this.saved = saved;
+    }
+
 
     public Collection<Comic> getStillReading() {
         return stillReading;

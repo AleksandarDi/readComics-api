@@ -24,7 +24,15 @@ public interface UserService {
 
     void removeFavourite(int userId,int comicId) throws Exception;
 
+    void removeStillReading(int userId,int comicId) throws Exception;
+
     Collection<Comic> getAllStillReading(int id) throws Exception;
+
+    Collection<Comic> getAllSaved(int id) throws Exception;
+
+    void AddSaved(int user_id,int comic_id)  throws Exception;
+
+    void removeSaved(int user_id,int comic_id)  throws Exception;
 
     String Exists(String userName, String email);
 }

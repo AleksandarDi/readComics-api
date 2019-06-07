@@ -71,6 +71,8 @@ public class UserServiceImpl implements UserService {
         us.setFullName(fullName);
         repository.save(us);
     }
+
+    //favourite
     @Override
     public void AddFavourite(int user_id, int comic_id) throws Exception{
 
@@ -79,16 +81,6 @@ public class UserServiceImpl implements UserService {
             Comic com = comicsRepository.findById(comic_id).orElseThrow(Exception::new);
             comics.add(com);
             repository.save(us);
-
-    }
-    @Override
-    public void AddStillReading(int user_id, int comic_id) throws Exception{
-
-        User us = repository.findById(user_id).orElseThrow(Exception::new);
-        Collection<Comic> comics = us.getFavourites();
-        Comic com = comicsRepository.findById(comic_id).orElseThrow(Exception::new);
-        comics.add(com);
-        repository.save(us);
 
     }
 
@@ -111,12 +103,63 @@ public class UserServiceImpl implements UserService {
         repository.save(user);
     }
 
+    //still reading
     @Override
     public Collection<Comic> getAllStillReading(int id) throws Exception {
         User us = repository.findById(id).orElseThrow(Exception::new);
         return us.getStillReading();
 
     }
+
+    @Override
+    public void AddStillReading(int user_id, int comic_id) throws Exception{
+
+        User us = repository.findById(user_id).orElseThrow(Exception::new);
+        Collection<Comic> comics = us.getStillReading();
+        Comic com = comicsRepository.findById(comic_id).orElseThrow(Exception::new);
+        comics.add(com);
+        repository.save(us);
+
+    }
+
+    @Override
+    public void removeStillReading(int userId,int comicId) throws Exception{
+        User user = repository.findById(userId).orElseThrow(Exception::new);
+        Collection<Comic> stillReading = user.getStillReading();
+        Comic comic = comicsRepository.findById(comicId).orElseThrow(Exception::new);
+        if(stillReading.contains(comic)) {
+            stillReading.remove(comic);
+        }
+        repository.save(user);
+    }
+    //saved
+    @Override
+    public Collection<Comic> getAllSaved(int id) throws Exception {
+        User us = repository.findById(id).orElseThrow(Exception::new);
+        return us.getSaved();
+    }
+
+    @Override
+    public void AddSaved(int user_id, int comic_id) throws Exception {
+        User us = repository.findById(user_id).orElseThrow(Exception::new);
+        Collection<Comic> comics = us.getSaved();
+        Comic com = comicsRepository.findById(comic_id).orElseThrow(Exception::new);
+        comics.add(com);
+        repository.save(us);
+    }
+
+    @Override
+    public void removeSaved(int user_id, int comic_id) throws Exception {
+        User user = repository.findById(user_id).orElseThrow(Exception::new);
+        Collection<Comic> saved = user.getSaved();
+        Comic comic = comicsRepository.findById(comic_id).orElseThrow(Exception::new);
+        if(saved.contains(comic)) {
+            saved.remove(comic);
+        }
+        repository.save(user);
+    }
+
+
     @Override
     public String Exists(String userName,String email){
         //User us = repository.findByUserName(userName);
