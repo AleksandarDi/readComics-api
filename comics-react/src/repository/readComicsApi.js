@@ -122,6 +122,21 @@ export const getComicsByID = (id) => {
     });
 };
 
+export const addFavorite = (user, comic) => {
+    return fetch('http://localhost:8080/favourite', {
+
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            userId: user,
+            comicId: comic
+        })
+
+    });
+};
+
 export const removeFavoriteFromUser = (user, comic) => {
 
     const headers = new Headers({
@@ -142,3 +157,94 @@ export const removeFavoriteFromUser = (user, comic) => {
     });
 };
 
+
+export const getUserStillReading = (id) => {
+    return request({
+        url: "http://localhost:8080/still_reading/"+id,
+        method: 'GET'
+    });
+};
+
+export const addStillReading = (user, comic) => {
+    return fetch('http://localhost:8080/still_reading', {
+
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            userId: user,
+            comicId: comic
+        })
+
+    });
+};
+
+export const removeStillReadingFromUser = (user, comic) => {
+
+    const headers = new Headers({
+        'Content-Type': 'application/json',
+    })
+
+    if(localStorage.getItem(ACCESS_TOKEN)) {
+        headers.append('Authorization', 'Bearer ' + localStorage.getItem(ACCESS_TOKEN))
+    }
+
+    return fetch("http://localhost:8080/still_reading/delete", {
+        method: 'DELETE',
+        headers: headers,
+        body: JSON.stringify({
+            userId: user,
+            comicId: comic
+        })
+    });
+};
+
+export const getUserSaved = (id) => {
+    return request({
+        url: "http://localhost:8080/saved/"+id,
+        method: 'GET'
+    });
+};
+
+export const addSaved = (user, comic) => {
+    return fetch('http://localhost:8080/saved', {
+
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            userId: user,
+            comicId: comic
+        })
+
+    });
+};
+
+export const removeSavedFromUser = (user, comic) => {
+
+    const headers = new Headers({
+        'Content-Type': 'application/json',
+    })
+
+    if(localStorage.getItem(ACCESS_TOKEN)) {
+        headers.append('Authorization', 'Bearer ' + localStorage.getItem(ACCESS_TOKEN))
+    }
+
+    return fetch("http://localhost:8080/saved/delete", {
+        method: 'DELETE',
+        headers: headers,
+        body: JSON.stringify({
+            userId: user,
+            comicId: comic
+        })
+    });
+};
+
+export const userIsReading = (user, comic) => {
+    return request({
+        url: "http://localhost:8080/user/still_reading?userId="+user+"&comicId="+comic,
+        method: 'GET'
+    });
+};

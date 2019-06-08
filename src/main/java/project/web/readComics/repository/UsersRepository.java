@@ -1,6 +1,7 @@
 package project.web.readComics.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import project.web.readComics.model.Role;
 import project.web.readComics.model.User;
 
@@ -12,6 +13,4 @@ public interface UsersRepository extends JpaRepository<User,Integer> {
     List<User> findByRoles(Collection<Role> roles);
     boolean existsByUserName(String username);
     boolean existsByEmail(String email);
-
-
 }

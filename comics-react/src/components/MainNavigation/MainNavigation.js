@@ -50,7 +50,7 @@ class MainNavigation extends Component {
             showProfileFlag: false,
             showDiscoverFlag: false,
         })
-    }
+    };
     
     showProfile = () => {
         this.setState({
@@ -59,7 +59,7 @@ class MainNavigation extends Component {
             showProfileFlag: true,
             showDiscoverFlag: false,
         })
-    }
+    };
 
     showDiscover = () => {
         this.setState({
@@ -68,7 +68,7 @@ class MainNavigation extends Component {
             showProfileFlag: false,
             showDiscoverFlag: true,
         })
-    }
+    };
 
     render() {
 
@@ -114,7 +114,11 @@ class MainNavigation extends Component {
                 </div>
 
                 <div className="col-lg-12 home-content">
-                    {this.state.showDashboardFlag && <Dashboard dashboard = "Dashboard"/>}
+                    {this.state.showDashboardFlag &&
+                    <Dashboard
+                        dashboard = "Dashboard"
+                        profile={this.showProfile.bind(this)}
+                        discover={this.showDiscover.bind(this)}/>}
                     {this.state.showProfileFlag && <Profile profile="Profile"/>}
                     {this.state.showDiscoverFlag && <Discover discover="Discover"/>}
                 </div>

@@ -1,25 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
-import Carousel from 'react-bootstrap/Carousel';
-import {ACCESS_TOKEN, getComics} from "../../../repository/readComicsApi";
-
-import Button from '@material-ui/core/Button';
+import {ACCESS_TOKEN, getComics, getUserSaved, getUserStillReading} from "../../../repository/readComicsApi";
+import { Icon, Button } from 'semantic-ui-react';
 import LoadingOverlay from "react-loading-overlay";
 import PacmanLoader from 'react-spinners/PacmanLoader';
-/*
-<div className="col-lg-12">
 
-    <div className="col-lg-10 float-left">
-        <img
-            className="d-block w-25"
-            src="https://cdn.pastemagazine.com/www/system/images/photo_albums/bestcomiccoversof2018/large/amazing-spider-man--2-cover-art-by-ryan-ottley.png?1384968217"
-            alt="First slide"
-        />
-    </div>
-
-
-</div>
-*/
 
 class Dashboard extends Component {
 
@@ -29,11 +14,9 @@ class Dashboard extends Component {
 
             component: "Dashboard",
             comics: null,
-
-            // need a count service for ContinueReading
+            reading: null,
+            saved: null,
             showContinueReadingFlag: false,
-
-            // need a count service for SavedComics
             showSavedFlag: false,
             isActive: true
         }
@@ -42,14 +25,62 @@ class Dashboard extends Component {
     }
 
     componentWillMount(){
+
+        if(sessionStorage.getItem("cat") !== null)
+            sessionStorage.removeItem("cat");
+
+
         getComics().then((data) =>{
-            console.log(data);
+
+            getUserStillReading(sessionStorage.getItem("currentUser_id")).then((read) =>{
+                if(read.length > 0) {
+                    this.setState({
+                        reading: read,
+                        showContinueReadingFlag: true
+                    })
+                }
+            });
+
+            getUserSaved(sessionStorage.getItem("currentUser_id")).then((save) =>{
+                if(save.length > 0) {
+                    this.setState({
+                        saved: save,
+                        showSavedFlag: true
+                    })
+                }
+            });
+
             this.setState({
                 comics: data,
                 isActive: false
             })
-        })
+        });
+
     }
+
+    showStillReading = (e) =>{
+        e.preventDefault();
+
+        sessionStorage.setItem("profile_tabs", "comics");
+        sessionStorage.setItem("activeItem", "0");
+
+        this.props.profile()
+    };
+
+    showProfile = (e) =>{
+        e.preventDefault();
+
+        sessionStorage.setItem("profile_tabs", "comics");
+        sessionStorage.setItem("activeItem", "1");
+
+        this.props.profile()
+    };
+
+    showDiscover = (e) =>{
+        e.preventDefault();
+
+        this.props.discover();
+    };
 
     signOut = (s) =>{
         s.preventDefault()
@@ -58,39 +89,76 @@ class Dashboard extends Component {
         sessionStorage.removeItem("active");
         sessionStorage.removeItem("profile_tabs");
         window.location.reload()
-    }
+    };
 
     render() {
 
-        if(this.state.comics !== null) {
-            var size = 3;
-            var comics = this.state.comics.slice(0, size).map((comic, i) => (
-                <li className="list-inline-item" key={i}>
-                        <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
-                            <img
-                                className="figure-img img-thumbnail rounded shadow"
-                                style={{height: "300px", width: "auto"}}
-                                src={process.env.PUBLIC_URL + comic.img}
-                                alt={comic.name}/>
-                            <figcaption className="figure-caption font-weight-bold text-center">{comic.name}</figcaption>
-                        </figure>
+        let comics = null;
+        let reading = null;
+        let saved = null;
 
+        if(this.state.comics !== null) {
+            let size = 3;
+            comics = this.state.comics.slice(0, size).map((comic, i) => (
+                <li className="list-inline-item" key={i}>
+                    <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
+                        <img
+                            className="figure-img img-thumbnail rounded shadow"
+                            style={{height: "300px", width: "auto"}}
+                            src={process.env.PUBLIC_URL + comic.img}
+                            alt={comic.name}/>
+                        <figcaption className="figure-caption font-weight-bold text-center">{comic.name}</figcaption>
+                    </figure>
+                </li>
+            ))
+        };
+
+        if(this.state.reading !== null) {
+            let size = 3;
+            reading = this.state.reading.slice(0, size).map((reading, i) => (
+                <li className="list-inline-item" key={i}>
+                    <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
+                        <img
+                            className="figure-img img-thumbnail rounded shadow"
+                            style={{height: "300px", width: "auto"}}
+                            src={process.env.PUBLIC_URL + reading.img}
+                            alt={reading.name}/>
+                        <figcaption className="figure-caption font-weight-bold text-center">{reading.name}</figcaption>
+                    </figure>
+                </li>
+            ))
+        };
+
+        if(this.state.saved !== null) {
+            let size = 3;
+            saved = this.state.saved.slice(0, size).map((saved, i) => (
+                <li className="list-inline-item" key={i}>
+                    <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
+                        <img
+                            className="figure-img img-thumbnail rounded shadow"
+                            style={{height: "300px", width: "auto"}}
+                            src={process.env.PUBLIC_URL + saved.img}
+                            alt={saved.name}/>
+                        <figcaption className="figure-caption font-weight-bold text-center">{saved.name}</figcaption>
+                    </figure>
                 </li>
             ))
         }
+
         return (
             <div className="col-lg-9 p-2">
                 <div className="row">
                     <div className="col-lg-12">
                         <em className="h4 m-4 float-left">Dashboard</em>
                         <Button
-                            className="h4 m-4 float-right"
                             onClick={this.signOut.bind(this)}
-                            variant="outlined"
-                            size="small"
-                            color="inherit"
-                        >
-                            Logout
+                            className="h4 m-4 float-right bg-light"
+                            icon>
+                            <Icon
+                                link
+                                color="teal"
+                                size="large"
+                                name="power off"/>
                         </Button>
                     </div>
                 </div>
@@ -98,36 +166,6 @@ class Dashboard extends Component {
                 
 
                 <div className="container mt-5">
-
-                    {
-                        this.state.showContinueReadingFlag &&
-
-                        <div className="card m-4">
-                            <div className="h5 card-title m-4 font-weight-light">
-                                <i className="fa fa-paper-plane text-warning" />  Continue reading
-                            </div>
-                            <div className="card-body">
-                                <ul className="list-inline text-center col-lg-12">
-
-                                </ul>
-                            </div>
-                        </div>
-                    }
-
-                    {
-                        this.state.showSavedFlag && 
-
-                        <div className="card m-4">
-                            <div className="h5 card-title m-4 font-weight-light">
-                                <i className="fa fa-heart text-danger" />  Saved
-                            </div>
-                            <div className="card-body">
-                                <ul className="list-inline text-center col-lg-12">
-
-                                </ul>
-                            </div>
-                        </div>
-                    }
 
                     <LoadingOverlay
                         active={this.state.isActive}
@@ -149,21 +187,95 @@ class Dashboard extends Component {
                         spinner={<PacmanLoader color={'#288282'} />}
                     >
 
-                        <div className="col-lg-12 p-2 mx-auto">
-                            {!this.state.isActive &&
-                            <div className="card m-4">
-                                <div className="h5 card-title m-4 font-weight-light">
-                                    <i className="fa fa-compass text-success"/> What's new?
-                                </div>
-                                <div className="card-body">
-                                    <ul className="list-inline text-center col-lg-12">
-                                        {comics}
-                                    </ul>
+
+                        {!this.state.isActive &&
+                        <div className="card m-4">
+                            <div className="h5 card-title m-4 font-weight-light">
+                                <i className="fa fa-compass text-success"/> What's new?
+                            </div>
+                            <div className="card-body">
+                                <ul className="list-inline text-center col-lg-12">
+                                    {comics}
+                                </ul>
+                            </div>
+                            <div className="card-footer col-lg-10 mx-auto bg-white">
+                                <div className="text-center">
+                                    <Button
+                                        onClick={this.showDiscover.bind(this)}
+                                        className="bg-white"
+                                        icon>
+                                        <Icon
+                                            link
+                                            color="green"
+                                            size="big"
+                                            name="chevron circle down"/>
+                                    </Button>
                                 </div>
                             </div>
-                            }
                         </div>
+                        }
+
                     </LoadingOverlay>
+
+                    {
+                        this.state.showContinueReadingFlag &&
+
+                        <div className="card m-4">
+                            <div className="h5 card-title m-4 font-weight-light">
+                                <i className="fa fa-paper-plane text-warning" />  Continue reading
+                            </div>
+                            <div className="card-body">
+                                <ul className="list-inline text-center col-lg-12">
+                                    {reading}
+                                </ul>
+                            </div>
+                            <div className="card-footer col-lg-10 mx-auto bg-white">
+                                <div className="text-center">
+                                    <Button
+                                        onClick={this.showStillReading.bind(this)}
+                                        className="bg-white"
+                                        icon>
+                                        <Icon
+                                            link
+                                            color="yellow"
+                                            size="big"
+                                            name="chevron circle down"/>
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    {
+                        this.state.showSavedFlag && 
+
+                        <div className="card m-4">
+                            <div className="h5 card-title m-4 font-weight-light">
+                                <i className="fa fa-heart text-danger" />  Saved
+                            </div>
+                            <div className="card-body">
+                                <ul className="list-inline text-center col-lg-12">
+                                    {saved}
+                                </ul>
+                            </div>
+                            <div className="card-footer col-lg-10 mx-auto bg-white">
+                                <div className="text-center">
+                                    <Button
+                                        onClick={this.showProfile.bind(this)}
+                                        className="bg-white"
+                                        icon>
+                                    <Icon
+                                        link
+                                        color="red"
+                                        size="big"
+                                        name="chevron circle down"/>
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+
                 </div>
             </div>
         )

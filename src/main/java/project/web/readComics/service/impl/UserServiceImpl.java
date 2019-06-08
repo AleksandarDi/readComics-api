@@ -171,4 +171,15 @@ public class UserServiceImpl implements UserService {
         }
         else return "Valid";
     }
+
+    @Override
+    public String containsComicInStillReading(int user_id, int comic_id) throws Exception {
+        User user = repository.findById(user_id).orElseThrow(Exception::new);
+        Collection<Comic> reading = user.getStillReading();
+        Comic comic = comicsRepository.findById(comic_id).orElseThrow(Exception::new);
+        if(reading.contains(comic)) {
+            return "true";
+        }
+        else return "false";
+    }
 }

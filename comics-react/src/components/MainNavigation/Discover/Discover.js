@@ -1,9 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
 import {ACCESS_TOKEN} from "../../../repository/readComicsApi";
-import Button from '@material-ui/core/Button';
 import ComicsByCategory from "./ComicsByCategory/ComicsByCategory";
-import { Dropdown } from 'semantic-ui-react'
+import {Dropdown, Icon, Button} from 'semantic-ui-react'
 
 const categories = [
     { key: 'marvel', text: 'Marvel Comics', value: 'Marvel' },
@@ -57,13 +56,14 @@ class Discover extends Component {
                     <div className="col-lg-12">
                         <em className="h4 m-4 float-left">Discover</em>
                         <Button
-                            className="h4 m-4 float-right"
                             onClick={this.signOut.bind(this)}
-                            variant="outlined"
-                            size="small"
-                            color="inherit"
-                        >
-                            Logout
+                            className="h4 m-4 float-right bg-light"
+                            icon>
+                            <Icon
+                                link
+                                color="teal"
+                                size="large"
+                                name="power off"/>
                         </Button>
                     </div>
                 </div>

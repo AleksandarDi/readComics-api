@@ -2,7 +2,7 @@
 import React, {Component} from 'react';
 import { Icon, Button } from 'semantic-ui-react';
 import PDF from 'react-pdf-js';
-import {getComicsByID} from "../../../../repository/readComicsApi";
+import {addStillReading, getComicsByID, getUserSaved, getUserStillReading} from "../../../../repository/readComicsApi";
 import LoadingOverlay from "react-loading-overlay";
 import {PacmanLoader} from "react-spinners";
 
@@ -18,12 +18,20 @@ class ComicViewer extends Component {
     }
 
     componentWillMount() {
+
         getComicsByID(this.props.id).then((data) => {
             this.setState({
                 comic: data,
                 isLoading: false
             });
-        })
+
+            getUserStillReading(sessionStorage.getItem("currentUser_id")).then((comic) => {
+                if(data.filter(c => c === comic).count() === 0){
+                    addStillReading(sessionStorage.getItem("currentUser_id"), comic.id);
+                }
+            });
+
+        });
     }
 
     onDocumentComplete = (pages) => {
@@ -110,16 +118,6 @@ class ComicViewer extends Component {
             <div>
                 <div className="modal-header">
                     <Button.Group className="text-center mx-auto">
-                        <Button
-                            basic color='black'
-                            animated="vertical">
-                            <Button.Content hidden>Save</Button.Content>
-                            <Button.Content visible>
-                                <Icon
-                                    className={"text-dark text-center h-25 w-25"}
-                                    name="bookmark outline"/>
-                            </Button.Content>
-                        </Button>
                         <Button
                             onClick={this.props.close}
                             basic color='black'

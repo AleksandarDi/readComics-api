@@ -130,4 +130,14 @@ public class UserResource {
         );
     }
 
+    @GetMapping("/user/still_reading")
+    public String DoesItExist(@RequestParam("userId") int userId,
+                              @RequestParam("comicId") int comicId) throws Exception{
+        return userServices.containsComicInStillReading(
+                userId,
+                comicId
+        );
+    }
+
+
 }

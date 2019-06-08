@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 import './Profile.scss';
 import UserInfo from "./UserInfo/UserInfo";
 import UserComics from "./UserComics/UserComics";
-import Button from '@material-ui/core/Button';
 import {ACCESS_TOKEN} from "../../../repository/readComicsApi";
+import {Icon, Button} from "semantic-ui-react";
 
 class Profile extends Component {
 
@@ -21,6 +21,9 @@ class Profile extends Component {
     componentWillMount(){
         sessionStorage.setItem("successMsg", "false");
         sessionStorage.setItem("errorMsg", "false");
+
+        if(sessionStorage.getItem("cat") !== null)
+            sessionStorage.removeItem("cat");
 
         if(sessionStorage.getItem("profile_tabs") !== null){
             if(sessionStorage.getItem("profile_tabs") === "info"){
@@ -70,13 +73,14 @@ class Profile extends Component {
                     <div className="col-lg-12">
                         <em className="h4 m-4 float-left">Profile</em>
                         <Button
-                            className="h4 m-4 float-right"
                             onClick={this.signOut.bind(this)}
-                            variant="outlined"
-                            size="small"
-                            color="inherit"
-                        >
-                            Logout
+                            className="h4 m-4 float-right bg-light"
+                            icon>
+                            <Icon
+                                link
+                                color="teal"
+                                size="large"
+                                name="power off"/>
                         </Button>
                     </div>
                 </div>

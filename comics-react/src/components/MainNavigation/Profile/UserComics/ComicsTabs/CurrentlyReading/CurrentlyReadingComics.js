@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import { Header, Image, Table, Icon, Button } from 'semantic-ui-react';
-import {getUserFavourites} from "../../../../../../repository/readComicsApi";
+import {
+    getUserStillReading,
+    removeStillReadingFromUser
+} from "../../../../../../repository/readComicsApi";
 import ComicViewer from "../../../../Discover/ComicViewer/ComicViewer";
 import Modal from "react-modal";
 
@@ -22,21 +25,32 @@ class CurrentlyReadingComics extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            reading: null,
+            favorites: null,
             id: "",
             isLoading: true,
-            buttonDisabled: false
-        }
-
+            buttonDisabled: false,
+            favCount: 0,
+            showTable: true
+        };
+        sessionStorage.setItem("activeItem", "0")
     }
 
     componentWillMount(){
-        getUserFavourites(sessionStorage.getItem("currentUser_id")).then((data) => {
+        getUserStillReading(sessionStorage.getItem("currentUser_id")).then((data) => {
             console.log(data);
-            this.setState({
-                favorites: data,
-                isLoading: false
-            })
+            if(data.length > 0) {
+                this.setState({
+                    favorites: data,
+                    isLoading: false,
+                    showTable: true
+                })
+            }
+            else{
+                this.setState({
+                    isLoading: true,
+                    showTable: false
+                })
+            }
         })
     }
 
@@ -56,6 +70,12 @@ class CurrentlyReadingComics extends Component{
         });
     }
 
+    removeFromCurrentlyReading = (comic) =>{
+        removeStillReadingFromUser(sessionStorage.getItem("currentUser_id"), comic).then(
+            window.location.reload()
+        )
+    };
+
     render(){
 
         if(this.state.favorites !== null) {
@@ -66,7 +86,7 @@ class CurrentlyReadingComics extends Component{
                             <Image src={process.env.PUBLIC_URL + comic.img} rounded size='mini' />
                             <Header.Content>
                                 {comic.name}
-                                <Header.Subheader>Human Resources</Header.Subheader>
+                                <Header.Subheader>{comic.writer}</Header.Subheader>
                             </Header.Content>
                         </Header>
                     </Table.Cell>
@@ -86,6 +106,7 @@ class CurrentlyReadingComics extends Component{
                     </Table.Cell>
                     <Table.Cell>
                         <Button
+                            onClick={this.removeFromCurrentlyReading.bind(this, comic.id)}
                             basic color='red'
                             animated='vertical'
                             hidden={this.state.buttonDisabled}>
@@ -98,51 +119,37 @@ class CurrentlyReadingComics extends Component{
                         </Button>
                     </Table.Cell>
                 </Table.Row>
-            ))
+            ));
         }
 
         return(
-            <Table className={"mx-auto"} basic='very' celled collapsing>
+            <div>
+                {this.state.showTable &&
+                <div>
+                    <Table className={"mx-auto"} basic='very' celled collapsing>
 
-                <Table.Body>
-                    {comics}
-                </Table.Body>
+                        <Table.Body>
+                            {comics}
+                        </Table.Body>
 
-                <div className="col-lg-9 p-2">
-                    <Modal
-                        isOpen={this.state.modalIsOpen}
-                        onRequestClose={this.closeModal}
-                        style={customStyles}
-                        contentLabel="Comic">
+                    </Table>
+                    <div className="col-lg-9 p-2">
+                        <Modal
+                            isOpen={this.state.modalIsOpen}
+                            onRequestClose={this.closeModal}
+                            style={customStyles}
+                            contentLabel="Comic">
 
-                        <ComicViewer
-                            id={this.state.id}
-                            close={this.closeModal.bind(this)}/>
+                            <ComicViewer
+                                id={this.state.id}
+                                close={this.closeModal.bind(this)}/>
 
-                    </Modal>
-                </div>
+                        </Modal>
+                    </div>
+                </div>}
 
-                {/*<Table.Footer>
-                    <Table.Row>
-                        <Table.HeaderCell colSpan='3'>
-                            <Menu floated='right' pagination>
-                                <Menu.Item as='a' icon>
-                                    <Icon name='chevron left' />
-                                </Menu.Item>
-                                <Menu.Item as='a'>1</Menu.Item>
-                                <Menu.Item as='a'>2</Menu.Item>
-                                <Menu.Item as='a'>3</Menu.Item>
-                                <Menu.Item as='a'>4</Menu.Item>
-                                <Menu.Item as='a' icon>
-                                    <Icon name='chevron right' />
-                                </Menu.Item>
-                            </Menu>
-                        </Table.HeaderCell>
-                    </Table.Row>
-                </Table.Footer>*/}
-
-
-            </Table>
+                {!this.state.showTable && <h4 className="text-muted text-center m-5">You're currently not reading any comics.</h4>}
+            </div>
         );
     }
 

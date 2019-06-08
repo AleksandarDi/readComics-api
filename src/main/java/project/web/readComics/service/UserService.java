@@ -35,4 +35,6 @@ public interface UserService {
     void removeSaved(int user_id,int comic_id)  throws Exception;
 
     String Exists(String userName, String email);
+
+    String containsComicInStillReading(int user_id, int comic_id) throws Exception;
 }

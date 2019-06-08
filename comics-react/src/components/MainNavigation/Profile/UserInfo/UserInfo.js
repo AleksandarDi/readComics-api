@@ -24,9 +24,14 @@ class UserInfo extends Component {
             showErrorMsg: false,
             isActive: true
         }
+
     }
 
     componentWillMount(){
+
+        if(sessionStorage.getItem("activeItem") !== null){
+            sessionStorage.removeItem("activeItem")
+        }
 
         getCurrentUser()
             .then((data) => {

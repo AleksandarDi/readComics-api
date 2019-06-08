@@ -25,18 +25,29 @@ class FavoriteComics extends Component{
             favorites: null,
             id: "",
             isLoading: true,
-            buttonDisabled: false
-        }
-
+            buttonDisabled: false,
+            favCount: 0,
+            showTable: true
+        };
+        sessionStorage.setItem("activeItem", "2")
     }
 
     componentWillMount(){
         getUserFavourites(sessionStorage.getItem("currentUser_id")).then((data) => {
             console.log(data);
-            this.setState({
-                favorites: data,
-                isLoading: false
-            })
+            if(data.length > 0) {
+                this.setState({
+                    favorites: data,
+                    isLoading: false,
+                    showTable: true
+                })
+            }
+            else{
+                this.setState({
+                    isLoading: true,
+                    showTable: false
+                })
+            }
         })
     }
 
@@ -72,7 +83,7 @@ class FavoriteComics extends Component{
                             <Image src={process.env.PUBLIC_URL + comic.img} rounded size='mini' />
                             <Header.Content>
                                 {comic.name}
-                                <Header.Subheader>Human Resources</Header.Subheader>
+                                <Header.Subheader>{comic.writer}</Header.Subheader>
                             </Header.Content>
                         </Header>
                     </Table.Cell>
@@ -105,52 +116,36 @@ class FavoriteComics extends Component{
                         </Button>
                     </Table.Cell>
                 </Table.Row>
-            ))
+            ));
         }
 
         return(
             <div>
-            <Table className={"mx-auto"} basic='very' celled collapsing>
+                {this.state.showTable &&
+                <div>
+                    <Table className={"mx-auto"} basic='very' celled collapsing>
 
-                <Table.Body>
-                    {comics}
-                </Table.Body>
+                        <Table.Body>
+                            {comics}
+                        </Table.Body>
 
+                    </Table>
+                    <div className="col-lg-9 p-2">
+                            <Modal
+                                isOpen={this.state.modalIsOpen}
+                                onRequestClose={this.closeModal}
+                                style={customStyles}
+                                contentLabel="Comic">
 
-                {/*<Table.Footer>
-                    <Table.Row>
-                        <Table.HeaderCell colSpan='3'>
-                            <Menu floated='right' pagination>
-                                <Menu.Item as='a' icon>
-                                    <Icon name='chevron left' />
-                                </Menu.Item>
-                                <Menu.Item as='a'>1</Menu.Item>
-                                <Menu.Item as='a'>2</Menu.Item>
-                                <Menu.Item as='a'>3</Menu.Item>
-                                <Menu.Item as='a'>4</Menu.Item>
-                                <Menu.Item as='a' icon>
-                                    <Icon name='chevron right' />
-                                </Menu.Item>
-                            </Menu>
-                        </Table.HeaderCell>
-                    </Table.Row>
-                </Table.Footer>*/}
+                                <ComicViewer
+                                    id={this.state.id}
+                                    close={this.closeModal.bind(this)}/>
 
+                            </Modal>
+                        </div>
+                </div>}
 
-            </Table>
-                <div className="col-lg-9 p-2">
-                    <Modal
-                        isOpen={this.state.modalIsOpen}
-                        onRequestClose={this.closeModal}
-                        style={customStyles}
-                        contentLabel="Comic">
-
-                        <ComicViewer
-                            id={this.state.id}
-                            close={this.closeModal.bind(this)}/>
-
-                    </Modal>
-                </div>
+                {!this.state.showTable && <h4 className="text-muted text-center m-5">You don't have favorite comics.</h4>}
             </div>
         );
     }
