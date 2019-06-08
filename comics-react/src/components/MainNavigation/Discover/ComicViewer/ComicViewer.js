@@ -2,7 +2,11 @@
 import React, {Component} from 'react';
 import { Icon, Button } from 'semantic-ui-react';
 import PDF from 'react-pdf-js';
-import {addStillReading, getComicsByID, getUserSaved, getUserStillReading} from "../../../../repository/readComicsApi";
+import {
+    addStillReading,
+    getComicsByID,
+    userIsReading
+} from "../../../../repository/readComicsApi";
 import LoadingOverlay from "react-loading-overlay";
 import {PacmanLoader} from "react-spinners";
 
@@ -24,18 +28,16 @@ class ComicViewer extends Component {
                 comic: data,
                 isLoading: false
             });
-
-            getUserStillReading(sessionStorage.getItem("currentUser_id")).then((comic) => {
-                if(data.filter(c => c === comic).count() === 0){
-                    addStillReading(sessionStorage.getItem("currentUser_id"), comic.id);
-                }
-            });
-
         });
+
+        userIsReading(sessionStorage.getItem("currentUser_id"), this.props.id).then((data) => {
+            if(!data){
+                addStillReading(sessionStorage.getItem("currentUser_id"), this.props.id);
+            }
+        })
     }
 
     onDocumentComplete = (pages) => {
-        console.log();
         this.setState({
             flagLast: false,
             pageOne: 1,
@@ -61,7 +63,6 @@ class ComicViewer extends Component {
     };
 
     renderPagination = (pageOne, pageTwo, pages) => {
-        console.log("yes");
         let previousButton = null;
         if (pageOne > 1) {
             previousButton =

@@ -29,33 +29,64 @@ class Dashboard extends Component {
         if(sessionStorage.getItem("cat") !== null)
             sessionStorage.removeItem("cat");
 
+        getUserStillReading(sessionStorage.getItem("currentUser_id")).then((read) =>{
+            if(read.length > 0) {
+                this.setState({
+                    reading: read.slice(0, 3).map((reading, i) => (
+                        <li className="list-inline-item" key={i}>
+                            <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
+                                <img
+                                    className="figure-img img-thumbnail rounded shadow"
+                                    style={{height: "300px", width: "auto"}}
+                                    src={process.env.PUBLIC_URL + reading.img}
+                                    alt={reading.name}/>
+                                <figcaption className="figure-caption font-weight-bold text-center">{reading.name}</figcaption>
+                            </figure>
+                        </li>
+                    )),
+                    showContinueReadingFlag: true
+                })
+            }
+        });
+
+        getUserSaved(sessionStorage.getItem("currentUser_id")).then((save) =>{
+            if(save.length > 0) {
+                this.setState({
+                    saved: save.slice(0, 3).map((saved, i) => (
+                        <li className="list-inline-item" key={i}>
+                            <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
+                                <img
+                                    className="figure-img img-thumbnail rounded shadow"
+                                    style={{height: "300px", width: "auto"}}
+                                    src={process.env.PUBLIC_URL + saved.img}
+                                    alt={saved.name}/>
+                                <figcaption className="figure-caption font-weight-bold text-center">{saved.name}</figcaption>
+                            </figure>
+                        </li>
+                    )),
+                    showSavedFlag: true
+                })
+            }
+        });
 
         getComics().then((data) =>{
 
-            getUserStillReading(sessionStorage.getItem("currentUser_id")).then((read) =>{
-                if(read.length > 0) {
-                    this.setState({
-                        reading: read,
-                        showContinueReadingFlag: true
-                    })
-                }
-            });
-
-            getUserSaved(sessionStorage.getItem("currentUser_id")).then((save) =>{
-                if(save.length > 0) {
-                    this.setState({
-                        saved: save,
-                        showSavedFlag: true
-                    })
-                }
-            });
-
             this.setState({
-                comics: data,
+                comics: data.slice(0, 3).map((comic, i) => (
+                    <li className="list-inline-item" key={i}>
+                        <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
+                            <img
+                                className="figure-img img-thumbnail rounded shadow"
+                                style={{height: "300px", width: "auto"}}
+                                src={process.env.PUBLIC_URL + comic.img}
+                                alt={comic.name}/>
+                            <figcaption className="figure-caption font-weight-bold text-center">{comic.name}</figcaption>
+                        </figure>
+                    </li>
+                )),
                 isActive: false
             })
         });
-
     }
 
     showStillReading = (e) =>{
@@ -92,58 +123,6 @@ class Dashboard extends Component {
     };
 
     render() {
-
-        let comics = null;
-        let reading = null;
-        let saved = null;
-
-        if(this.state.comics !== null) {
-            let size = 3;
-            comics = this.state.comics.slice(0, size).map((comic, i) => (
-                <li className="list-inline-item" key={i}>
-                    <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
-                        <img
-                            className="figure-img img-thumbnail rounded shadow"
-                            style={{height: "300px", width: "auto"}}
-                            src={process.env.PUBLIC_URL + comic.img}
-                            alt={comic.name}/>
-                        <figcaption className="figure-caption font-weight-bold text-center">{comic.name}</figcaption>
-                    </figure>
-                </li>
-            ))
-        };
-
-        if(this.state.reading !== null) {
-            let size = 3;
-            reading = this.state.reading.slice(0, size).map((reading, i) => (
-                <li className="list-inline-item" key={i}>
-                    <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
-                        <img
-                            className="figure-img img-thumbnail rounded shadow"
-                            style={{height: "300px", width: "auto"}}
-                            src={process.env.PUBLIC_URL + reading.img}
-                            alt={reading.name}/>
-                        <figcaption className="figure-caption font-weight-bold text-center">{reading.name}</figcaption>
-                    </figure>
-                </li>
-            ))
-        };
-
-        if(this.state.saved !== null) {
-            let size = 3;
-            saved = this.state.saved.slice(0, size).map((saved, i) => (
-                <li className="list-inline-item" key={i}>
-                    <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
-                        <img
-                            className="figure-img img-thumbnail rounded shadow"
-                            style={{height: "300px", width: "auto"}}
-                            src={process.env.PUBLIC_URL + saved.img}
-                            alt={saved.name}/>
-                        <figcaption className="figure-caption font-weight-bold text-center">{saved.name}</figcaption>
-                    </figure>
-                </li>
-            ))
-        }
 
         return (
             <div className="col-lg-9 p-2">
@@ -195,7 +174,7 @@ class Dashboard extends Component {
                             </div>
                             <div className="card-body">
                                 <ul className="list-inline text-center col-lg-12">
-                                    {comics}
+                                    {this.state.comics}
                                 </ul>
                             </div>
                             <div className="card-footer col-lg-10 mx-auto bg-white">
@@ -215,65 +194,65 @@ class Dashboard extends Component {
                         </div>
                         }
 
+                        {
+                            this.state.showContinueReadingFlag &&
+
+                            <div className="card m-4">
+                                <div className="h5 card-title m-4 font-weight-light">
+                                    <i className="fa fa-paper-plane text-warning" />  Continue reading
+                                </div>
+                                <div className="card-body">
+                                    <ul className="list-inline text-center col-lg-12">
+                                        {this.state.reading}
+                                    </ul>
+                                </div>
+                                <div className="card-footer col-lg-10 mx-auto bg-white">
+                                    <div className="text-center">
+                                        <Button
+                                            onClick={this.showStillReading.bind(this)}
+                                            className="bg-white"
+                                            icon>
+                                            <Icon
+                                                link
+                                                color="yellow"
+                                                size="big"
+                                                name="chevron circle down"/>
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        {
+                            this.state.showSavedFlag &&
+
+                            <div className="card m-4">
+                                <div className="h5 card-title m-4 font-weight-light">
+                                    <i className="fa fa-heart text-danger" />  Saved
+                                </div>
+                                <div className="card-body">
+                                    <ul className="list-inline text-center col-lg-12">
+                                        {this.state.saved}
+                                    </ul>
+                                </div>
+                                <div className="card-footer col-lg-10 mx-auto bg-white">
+                                    <div className="text-center">
+                                        <Button
+                                            onClick={this.showProfile.bind(this)}
+                                            className="bg-white"
+                                            icon>
+                                            <Icon
+                                                link
+                                                color="red"
+                                                size="big"
+                                                name="chevron circle down"/>
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
                     </LoadingOverlay>
-
-                    {
-                        this.state.showContinueReadingFlag &&
-
-                        <div className="card m-4">
-                            <div className="h5 card-title m-4 font-weight-light">
-                                <i className="fa fa-paper-plane text-warning" />  Continue reading
-                            </div>
-                            <div className="card-body">
-                                <ul className="list-inline text-center col-lg-12">
-                                    {reading}
-                                </ul>
-                            </div>
-                            <div className="card-footer col-lg-10 mx-auto bg-white">
-                                <div className="text-center">
-                                    <Button
-                                        onClick={this.showStillReading.bind(this)}
-                                        className="bg-white"
-                                        icon>
-                                        <Icon
-                                            link
-                                            color="yellow"
-                                            size="big"
-                                            name="chevron circle down"/>
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    }
-
-                    {
-                        this.state.showSavedFlag && 
-
-                        <div className="card m-4">
-                            <div className="h5 card-title m-4 font-weight-light">
-                                <i className="fa fa-heart text-danger" />  Saved
-                            </div>
-                            <div className="card-body">
-                                <ul className="list-inline text-center col-lg-12">
-                                    {saved}
-                                </ul>
-                            </div>
-                            <div className="card-footer col-lg-10 mx-auto bg-white">
-                                <div className="text-center">
-                                    <Button
-                                        onClick={this.showProfile.bind(this)}
-                                        className="bg-white"
-                                        icon>
-                                    <Icon
-                                        link
-                                        color="red"
-                                        size="big"
-                                        name="chevron circle down"/>
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    }
 
 
                 </div>

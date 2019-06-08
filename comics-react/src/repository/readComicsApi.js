@@ -173,8 +173,8 @@ export const addStillReading = (user, comic) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            userId: user,
-            comicId: comic
+            user_id: user,
+            comic_id: comic
         })
 
     });
