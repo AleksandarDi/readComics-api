@@ -1,9 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component, useEffect } from 'react';
-import {getComicsByCategory} from "../../../../repository/readComicsApi";
+import {addFavorite, addSaved, getComicsByCategory} from "../../../../repository/readComicsApi";
 import LoadingOverlay from 'react-loading-overlay';
 import PacmanLoader from 'react-spinners/PacmanLoader';
 import Modal from "react-modal";
+import {Icon, Button} from "semantic-ui-react";
 
 const customStyles = {
     content: {
@@ -60,6 +61,16 @@ class ComicsByCategory extends Component {
         });
     };
 
+    addToFavorites = (id, comic) => {
+        addFavorite(id, comic);
+    };
+
+    saveComic = (id, comic) => {
+        console.log(id)
+        console.log(comic)
+        addSaved(id, comic);
+    };
+
 
     render() {
 
@@ -111,10 +122,78 @@ class ComicsByCategory extends Component {
                             contentLabel="Comic"
                             ariaHideApp={false}>
 
-                            <div className="modal-body">
+                            <div className="modal-header">
+                                <Button.Group className="text-center mx-auto">
+                                    <Button
+                                        onClick={
+                                            this.saveComic.bind(this,
+                                                sessionStorage.getItem("currentUser_id"),
+                                                this.state.comicInfo.id)}
+                                        basic color='black'
+                                        animated="vertical">
+                                        <Button.Content hidden>Save</Button.Content>
+                                        <Button.Content visible>
+                                            <Icon
+                                                className={"text-dark text-center h-25 w-25"}
+                                                name="bookmark outline"/>
+                                        </Button.Content>
+                                    </Button>
+                                    <Button
+                                        onClick={this.addToFavorites.bind(this,
+                                            sessionStorage.getItem("currentUser_id"),
+                                            this.state.comicInfo.id)}
+                                        basic color='black'
+                                        animated="vertical">
+                                        <Button.Content hidden>Favorite</Button.Content>
+                                        <Button.Content visible>
+                                            <Icon
+                                                className={"text-dark text-center h-25 w-25"}
+                                                name="heart outline"/>
+                                        </Button.Content>
+                                    </Button>
+                                    <Button
+                                        onClick={this.closeModal.bind(this)}
+                                        basic color='black'
+                                        animated="vertical">
+                                        <Button.Content hidden>Close</Button.Content>
+                                        <Button.Content visible>
+                                            <Icon
+                                                className={"text-dark text-center h-25 w-25"}
+                                                name="remove"/>
+                                        </Button.Content>
+                                    </Button>
+                                </Button.Group>
+                            </div>
 
-                                /* ADD COMIC BOOK INFO AND SAVE, READ AND FAVORITE BUTTONS */
+                            <div className="modal-body mx-auto">
 
+                                <div className="row">
+                                    <div className="float-left">
+                                        <figure
+                                            className="mt-3 mr-3 ml-5 figure"
+                                            key={this.state.comicInfo.id}>
+                                            <img
+                                                className="figure-img img-thumbnail rounded shadow"
+                                                style={{height: "400px", width: "auto"}}
+                                                src={process.env.PUBLIC_URL + this.state.comicInfo.img}
+                                                alt={this.state.comicInfo.name}/>
+                                        </figure>
+                                    </div>
+
+                                    <div className="float-right col-lg-7">
+                                        <h1 className="m-3 text-center">{this.state.comicInfo.name}</h1>
+                                        <div className="m-5">
+                                            <span className="h4"><b>Writer:</b> {this.state.comicInfo.writer}</span><br/>
+                                            <span className="h4"><b>Artist:</b> {this.state.comicInfo.coverArtist}</span><br/>
+                                            <span className="h4"><b>Category:</b> {this.state.comicInfo.category}</span><br/>
+                                            <br/>
+                                            <br/>
+                                            <span className="pt-5 h4 font-weight-bold">Description:</span><br/>
+                                            <p className="h4">{this.state.comicInfo.description}</p>
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                         </Modal>
