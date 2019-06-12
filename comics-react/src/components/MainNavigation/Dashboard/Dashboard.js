@@ -1,6 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
-import {ACCESS_TOKEN, getComics, getUserSaved, getUserStillReading} from "../../../repository/readComicsApi";
+import {
+    ACCESS_TOKEN,
+    getComics,
+    getCurrentUser,
+    getUserSaved,
+    getUserStillReading
+} from "../../../repository/readComicsApi";
 import { Icon, Button } from 'semantic-ui-react';
 import LoadingOverlay from "react-loading-overlay";
 import PacmanLoader from 'react-spinners/PacmanLoader';
@@ -19,58 +25,132 @@ class Dashboard extends Component {
             showContinueReadingFlag: false,
             showSavedFlag: false,
             isActive: true
-        }
+        };
+
         sessionStorage.setItem("active", "Dashboard");
         sessionStorage.setItem("profile_tabs", "info");
     }
 
-    componentWillMount(){
+    componentWillMount() {
 
-        if(sessionStorage.getItem("cat") !== null)
+        if (sessionStorage.getItem("cat") !== null)
             sessionStorage.removeItem("cat");
 
-        getUserStillReading(sessionStorage.getItem("currentUser_id")).then((read) =>{
-            if(read.length > 0) {
-                this.setState({
-                    reading: read.slice(0, 3).map((reading, i) => (
-                        <li className="list-inline-item" key={i}>
-                            <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
-                                <img
-                                    className="figure-img img-thumbnail rounded shadow"
-                                    style={{height: "300px", width: "auto"}}
-                                    src={process.env.PUBLIC_URL + reading.img}
-                                    alt={reading.name}/>
-                                <figcaption className="figure-caption font-weight-bold text-center">{reading.name}</figcaption>
-                            </figure>
-                        </li>
-                    )),
-                    showContinueReadingFlag: true
-                })
-            }
-        });
+        if (sessionStorage.getItem("currentUser_id") === null) {
+            getCurrentUser()
+                .then((data) => {
+                    getUserStillReading(data.id).then((read) =>{
+                        if(read.length > 0) {
+                            this.setState({
+                                reading: read.slice(0, 3).map((reading, i) => (
+                                    <li className="list-inline-item" key={i}>
+                                        <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
+                                            <img
+                                                className="figure-img img-thumbnail rounded shadow"
+                                                style={{height: "300px", width: "auto"}}
+                                                src={process.env.PUBLIC_URL + reading.img}
+                                                alt={reading.name}/>
+                                            <figcaption className="figure-caption font-weight-bold text-center">{reading.name}</figcaption>
+                                        </figure>
+                                    </li>
+                                )),
+                                showContinueReadingFlag: true,
+                                isActiveR: false
+                            })
+                        }
+                        else{
+                            this.setState({
+                                reading: "empty",
+                                isActiveR: false
+                            })
+                        }
+                    });
 
-        getUserSaved(sessionStorage.getItem("currentUser_id")).then((save) =>{
-            if(save.length > 0) {
-                this.setState({
-                    saved: save.slice(0, 3).map((saved, i) => (
-                        <li className="list-inline-item" key={i}>
-                            <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
-                                <img
-                                    className="figure-img img-thumbnail rounded shadow"
-                                    style={{height: "300px", width: "auto"}}
-                                    src={process.env.PUBLIC_URL + saved.img}
-                                    alt={saved.name}/>
-                                <figcaption className="figure-caption font-weight-bold text-center">{saved.name}</figcaption>
-                            </figure>
-                        </li>
-                    )),
-                    showSavedFlag: true
-                })
-            }
-        });
+                    getUserSaved(data.id).then((save) =>{
+                        if(save.length > 0) {
+                            this.setState({
+                                saved: save.slice(0, 3).map((saved, i) => (
+                                    <li className="list-inline-item" key={i}>
+                                        <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
+                                            <img
+                                                className="figure-img img-thumbnail rounded shadow"
+                                                style={{height: "300px", width: "auto"}}
+                                                src={process.env.PUBLIC_URL + saved.img}
+                                                alt={saved.name}/>
+                                            <figcaption className="figure-caption font-weight-bold text-center">{saved.name}</figcaption>
+                                        </figure>
+                                    </li>
+                                )),
+                                showSavedFlag: true,
+                                isActiveS: false
+                            })
+                        }
+                        else{
+                            this.setState({
+                                saved: "empty",
+                                isActiveS: false
+                            })
+                        }
+                    });
+                });
+        }
+        else{
+            getUserStillReading(sessionStorage.getItem("currentUser_id")).then((read) =>{
+                if(read.length > 0) {
+                    this.setState({
+                        reading: read.slice(0, 3).map((reading, i) => (
+                            <li className="list-inline-item" key={i}>
+                                <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
+                                    <img
+                                        className="figure-img img-thumbnail rounded shadow"
+                                        style={{height: "300px", width: "auto"}}
+                                        src={process.env.PUBLIC_URL + reading.img}
+                                        alt={reading.name}/>
+                                    <figcaption className="figure-caption font-weight-bold text-center">{reading.name}</figcaption>
+                                </figure>
+                            </li>
+                        )),
+                        showContinueReadingFlag: true,
+                        isActiveR: false
+                    })
+                }
+                else{
+                    this.setState({
+                        reading: "empty",
+                        isActiveR: false
+                    })
+                }
+            });
+
+            getUserSaved(sessionStorage.getItem("currentUser_id")).then((save) =>{
+                if(save.length > 0) {
+                    this.setState({
+                        saved: save.slice(0, 3).map((saved, i) => (
+                            <li className="list-inline-item" key={i}>
+                                <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
+                                    <img
+                                        className="figure-img img-thumbnail rounded shadow"
+                                        style={{height: "300px", width: "auto"}}
+                                        src={process.env.PUBLIC_URL + saved.img}
+                                        alt={saved.name}/>
+                                    <figcaption className="figure-caption font-weight-bold text-center">{saved.name}</figcaption>
+                                </figure>
+                            </li>
+                        )),
+                        showSavedFlag: true,
+                        isActiveS: false
+                    })
+                }
+                else{
+                    this.setState({
+                        saved: "empty",
+                        isActiveS: false
+                    })
+                }
+            });
+        }
 
         getComics().then((data) =>{
-
             this.setState({
                 comics: data.slice(0, 3).map((comic, i) => (
                     <li className="list-inline-item" key={i}>
@@ -82,12 +162,13 @@ class Dashboard extends Component {
                                 alt={comic.name}/>
                             <figcaption className="figure-caption font-weight-bold text-center">{comic.name}</figcaption>
                         </figure>
-                    </li>
-                )),
+                    </li>)),
                 isActive: false
             })
         });
+
     }
+
 
     showStillReading = (e) =>{
         e.preventDefault();

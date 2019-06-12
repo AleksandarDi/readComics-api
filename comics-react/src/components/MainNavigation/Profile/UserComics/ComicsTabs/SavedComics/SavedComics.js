@@ -1,9 +1,7 @@
 import React, {Component} from 'react';
 import { Header, Image, Table, Icon, Button } from 'semantic-ui-react';
 import {
-    getUserFavourites,
     getUserSaved,
-    removeFavoriteFromUser,
     removeSavedFromUser
 } from "../../../../../../repository/readComicsApi";
 import ComicViewer from "../../../../Discover/ComicViewer/ComicViewer";

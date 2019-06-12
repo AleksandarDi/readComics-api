@@ -58,8 +58,6 @@ class ComicViewer extends Component {
             pageOne: this.state.pageOne + 1,
             flagLast: false
         });
-
-
     };
 
     renderPagination = (pageOne, pageTwo, pages) => {

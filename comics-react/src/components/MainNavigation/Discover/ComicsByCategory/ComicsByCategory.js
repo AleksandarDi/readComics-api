@@ -5,6 +5,7 @@ import LoadingOverlay from 'react-loading-overlay';
 import PacmanLoader from 'react-spinners/PacmanLoader';
 import Modal from "react-modal";
 import {Icon, Button} from "semantic-ui-react";
+import ComicViewer from "../ComicViewer/ComicViewer";
 
 const customStyles = {
     content: {
@@ -28,10 +29,14 @@ class ComicsByCategory extends Component {
             category: props.category,
             id: "",
             comicInfo: "",
+            comicID: "",
             comics: null,
             isActive: true,
             showInfo: false,
-            modalIsOpen: false
+            modalIsOpen: false,
+            readComicById: false,
+            hiddenNext: false,
+            hiddenPrev: false
         }
     }
 
@@ -43,6 +48,20 @@ class ComicsByCategory extends Component {
                 isActive: false
             })
         })
+    }
+
+    openComicByid(){
+        this.setState({
+            readComicById: true,
+            modalIsOpen: false
+        });
+    }
+
+    closeComicByid(){
+        this.setState({
+            readComicById: false,
+            modalIsOpen: true
+        });
     }
 
     closeModal() {
@@ -57,6 +76,7 @@ class ComicsByCategory extends Component {
         this.setState({
             modalIsOpen: true,
             id: id,
+            comicID: comic.id,
             comicInfo: comic
         });
     };
@@ -71,16 +91,84 @@ class ComicsByCategory extends Component {
         addSaved(id, comic);
     };
 
+    handlePrevious = () => {
+
+        if(this.state.id - 1 > -1) {
+            this.setState({
+                id: this.state.id - 1,
+                comicID: this.state.comics[this.state.id - 1].id,
+                comicInfo: this.state.comics[this.state.id - 1]
+            });
+        }
+        else{
+            this.setState({
+                id: this.state.comics.length - 1,
+                comicID: this.state.comics[this.state.comics.length - 1].id,
+                comicInfo: this.state.comics[this.state.comics.length - 1]
+            });
+        }
+    };
+
+    handleNext = () => {
+
+        if(this.state.id + 1 < this.state.comics.length) {
+            this.setState({
+                id: this.state.id + 1,
+                comicID: this.state.comics[this.state.id + 1].id,
+                comicInfo: this.state.comics[this.state.id + 1]
+            });
+        }
+        else{
+            this.setState({
+                id: 0,
+                comicID: this.state.comics[0].id,
+                comicInfo: this.state.comics[0]
+            });
+        }
+
+    };
+
+
+    renderNext(){
+
+        let nextButton = null;
+
+        if(this.state.comicID !== null){
+            nextButton =
+                <Button
+                    className="float-right"
+                    onClick={this.handleNext.bind(this)}
+                    basic color='linkedin'
+                    animated="vertical">
+                    <Button.Content hidden>Next</Button.Content>
+                    <Button.Content visible>
+                        <Icon
+                            className={"text-dark text-center h-25 w-25"}
+                            name="angle right"/>
+                    </Button.Content>
+                </Button>
+        }
+        return (
+            <span>
+                {nextButton}
+            </span>
+        );
+    }
+
+    renderPrev(){
+
+    }
 
     render() {
 
+        let next = this.renderNext();
 
         if(this.state.comics !== null){
             var comics = this.state.comics.map((comic, i) => (
                     <figure
                         className="m-3 figure"
                         key={i}
-                        onClick={this.seeComicInfo.bind(this, comic.id, comic)}>
+                        onClick={this.seeComicInfo.bind(this, i, comic)}>
                         <img
                             className="figure-img img-thumbnail rounded shadow"
                             style={{height: "300px", width: "auto"}}
@@ -117,13 +205,37 @@ class ComicsByCategory extends Component {
                     <div className="col-lg-9 p-2">
                         <Modal
                             isOpen={this.state.modalIsOpen}
-                            onRequestClose={this.closeModal}
+                            onRequestClose={this.closeModal.bind(this)}
                             style={customStyles}
                             contentLabel="Comic"
                             ariaHideApp={false}>
 
                             <div className="modal-header">
+                                <Button
+                                    className="float-left"
+                                    onClick={this.handlePrevious.bind(this)}
+                                    hidden={this.state.hiddenPrev}
+                                    basic color='linkedin'
+                                    animated="vertical">
+                                    <Button.Content hidden>Prev</Button.Content>
+                                    <Button.Content visible>
+                                        <Icon
+                                            className={"text-dark text-center h-25 w-25"}
+                                            name="angle left"/>
+                                    </Button.Content>
+                                </Button>
                                 <Button.Group className="text-center mx-auto">
+                                    <Button
+                                        onClick={this.openComicByid.bind(this)}
+                                        basic color='black'
+                                        animated="vertical">
+                                        <Button.Content hidden>Read</Button.Content>
+                                        <Button.Content visible>
+                                            <Icon
+                                                className={"text-dark text-center h-25 w-25"}
+                                                name="tripadvisor"/>
+                                        </Button.Content>
+                                    </Button>
                                     <Button
                                         onClick={
                                             this.saveComic.bind(this,
@@ -163,6 +275,7 @@ class ComicsByCategory extends Component {
                                         </Button.Content>
                                     </Button>
                                 </Button.Group>
+                                {next}
                             </div>
 
                             <div className="modal-body mx-auto">
@@ -195,6 +308,18 @@ class ComicsByCategory extends Component {
                                     </div>
                                 </div>
                             </div>
+
+                        </Modal>
+
+                        <Modal
+                            isOpen={this.state.readComicById}
+                            onRequestClose={this.closeComicByid.bind(this)}
+                            style={customStyles}
+                            contentLabel="Comic">
+
+                            <ComicViewer
+                                id={this.state.comicInfo.id}
+                                close={this.closeComicByid.bind(this)}/>
 
                         </Modal>
                     </div>

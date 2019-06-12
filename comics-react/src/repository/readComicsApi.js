@@ -130,8 +130,8 @@ export const addFavorite = (user, comic) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            userId: user,
-            comicId: comic
+            user_id: user,
+            comic_id: comic
         })
 
     });
@@ -215,8 +215,8 @@ export const addSaved = (user, comic) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            userId: user,
-            comicId: comic
+            user_id: user,
+            comic_id: comic
         })
 
     });
@@ -236,8 +236,8 @@ export const removeSavedFromUser = (user, comic) => {
         method: 'DELETE',
         headers: headers,
         body: JSON.stringify({
-            userId: user,
-            comicId: comic
+            user_id: user,
+            comic_id: comic
         })
     });
 };

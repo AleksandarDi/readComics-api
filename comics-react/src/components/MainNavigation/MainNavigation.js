@@ -8,8 +8,8 @@ import {ACCESS_TOKEN, getCurrentUser} from '../../repository/readComicsApi';
 
 class MainNavigation extends Component {
 
-    constructor(props, nextState){
-        super(props, nextState);
+    constructor(props){
+        super(props);
         this.state = {
             component: "Dashboard",
             showDashboardFlag: true,
