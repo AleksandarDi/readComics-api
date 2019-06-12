@@ -68,7 +68,7 @@ class Profile extends Component {
 
     render() {
         return (
-            <div className="col-lg-9 p-2">
+            <div className="col-lg-9 p-2 vh-100">
                 <div className="row">
                     <div className="col-lg-12">
                         <em className="h4 m-4 float-left">Profile</em>

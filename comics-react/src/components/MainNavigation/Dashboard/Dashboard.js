@@ -51,7 +51,10 @@ class Dashboard extends Component {
             readComicById: false,
             hiddenNext: false,
             hiddenPrev: false,
-            categoryOfComic: null
+            categoryOfComic: null,
+            showMsg: false,
+            notification: "",
+            notificationClass: "alert alert-success"
         };
 
         sessionStorage.setItem("active", "Dashboard");
@@ -277,6 +280,18 @@ class Dashboard extends Component {
         userHasFavorite(id, comic).then((data)=>{
             if(!data){
                 addFavorite(id, comic);
+                this.setState({
+                    notification: "Comic added to favorites!",
+                    notificationClass: "alert alert-success text-center",
+                    showMsg: true
+                })
+            }
+            else{
+                this.setState({
+                    notification: "Comic is already one of your favorites!",
+                    notificationClass: "alert alert-info text-center",
+                    showMsg: true
+                })
             }
         })
     };
@@ -285,6 +300,18 @@ class Dashboard extends Component {
         userHasSaved(id, comic).then((data) => {
             if(!data){
                 addSaved(id, comic);
+                this.setState({
+                    notification: "Comic saved!",
+                    notificationClass: "alert alert-success text-center",
+                    showMsg: true
+                })
+            }
+            else{
+                this.setState({
+                    notification: "Comic is already saved!",
+                    notificationClass: "alert alert-info text-center",
+                    showMsg: true
+                })
             }
         })
     };
@@ -327,6 +354,14 @@ class Dashboard extends Component {
     };
 
     render() {
+
+        if(this.state.showMsg){
+            setTimeout(function() {
+                    this.setState({showMsg: false});
+                }
+                    .bind(this),
+                2000);
+        }
 
         return (
             <div className="col-lg-9 p-2">
@@ -544,7 +579,12 @@ class Dashboard extends Component {
                                 </div>
 
                                 <div className="modal-body mx-auto">
-
+                                    {
+                                        this.state.showMsg &&
+                                        <div className={this.state.notificationClass}>
+                                            {this.state.notification}
+                                        </div>
+                                    }
                                     <div className="row">
                                         <div className="float-left">
                                             <figure

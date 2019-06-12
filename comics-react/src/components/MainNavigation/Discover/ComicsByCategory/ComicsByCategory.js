@@ -26,7 +26,6 @@ const customStyles = {
     }
 };
 
-
 class ComicsByCategory extends Component {
 
     constructor(props){
@@ -42,7 +41,10 @@ class ComicsByCategory extends Component {
             modalIsOpen: false,
             readComicById: false,
             hiddenNext: false,
-            hiddenPrev: false
+            hiddenPrev: false,
+            showMsg: false,
+            notification: "",
+            notificationClass: "alert alert-success"
         }
     }
 
@@ -82,7 +84,8 @@ class ComicsByCategory extends Component {
             modalIsOpen: true,
             id: id,
             comicID: comic.id,
-            comicInfo: comic
+            comicInfo: comic,
+            showMsg: false
         });
     };
 
@@ -90,14 +93,39 @@ class ComicsByCategory extends Component {
         userHasFavorite(id, comic).then((data)=>{
             if(!data){
                 addFavorite(id, comic);
+                this.setState({
+                    notification: "Comic added to favorites!",
+                    notificationClass: "alert alert-success text-center",
+                    showMsg: true
+                })
             }
-        })
+            else{
+                this.setState({
+                    notification: "Comic is already one of your favorites!",
+                    notificationClass: "alert alert-info text-center",
+                    showMsg: true
+                })
+            }
+        });
+
     };
 
     saveComic = (id, comic) => {
         userHasSaved(id, comic).then((data) => {
             if(!data){
                 addSaved(id, comic);
+                this.setState({
+                    notification: "Comic saved!",
+                    notificationClass: "alert alert-success text-center",
+                    showMsg: true
+                })
+            }
+            else{
+                this.setState({
+                    notification: "Comic is already saved!",
+                    notificationClass: "alert alert-info text-center",
+                    showMsg: true
+                })
             }
         })
     };
@@ -108,14 +136,16 @@ class ComicsByCategory extends Component {
             this.setState({
                 id: this.state.id - 1,
                 comicID: this.state.comics[this.state.id - 1].id,
-                comicInfo: this.state.comics[this.state.id - 1]
+                comicInfo: this.state.comics[this.state.id - 1],
+                showMsg: false
             });
         }
         else{
             this.setState({
                 id: this.state.comics.length - 1,
                 comicID: this.state.comics[this.state.comics.length - 1].id,
-                comicInfo: this.state.comics[this.state.comics.length - 1]
+                comicInfo: this.state.comics[this.state.comics.length - 1],
+                showMsg: false
             });
         }
     };
@@ -126,20 +156,30 @@ class ComicsByCategory extends Component {
             this.setState({
                 id: this.state.id + 1,
                 comicID: this.state.comics[this.state.id + 1].id,
-                comicInfo: this.state.comics[this.state.id + 1]
+                comicInfo: this.state.comics[this.state.id + 1],
+                showMsg: false
             });
         }
         else{
             this.setState({
                 id: 0,
                 comicID: this.state.comics[0].id,
-                comicInfo: this.state.comics[0]
+                comicInfo: this.state.comics[0],
+                showMsg: false
             });
         }
 
     };
 
     render() {
+
+        if(this.state.showMsg){
+            setTimeout(function() {
+                    this.setState({showMsg: false});
+                }
+                    .bind(this),
+                2000);
+        }
 
         if(this.state.comics !== null){
             var comics = this.state.comics.map((comic, i) => (
@@ -268,8 +308,14 @@ class ComicsByCategory extends Component {
                             </div>
 
                             <div className="modal-body mx-auto">
-
+                                {
+                                    this.state.showMsg &&
+                                    <div className={this.state.notificationClass}>
+                                        {this.state.notification}
+                                    </div>
+                                }
                                 <div className="row">
+
                                     <div className="float-left">
                                         <figure
                                             className="mt-3 mr-3 ml-5 figure"

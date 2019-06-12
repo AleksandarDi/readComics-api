@@ -74,7 +74,7 @@ class MainNavigation extends Component {
 
         return (
 
-            <div className="bg-light vh-100">
+            <div className="bg-light">
                 <div className="wrapper">
 
                     <nav id="sidebar" className="text-light p-2">
