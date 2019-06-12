@@ -182,4 +182,27 @@ public class UserServiceImpl implements UserService {
         }
         else return "false";
     }
+
+    @Override
+    public String containsComicInSaved(int user_id, int comic_id) throws Exception {
+        User user = repository.findById(user_id).orElseThrow(Exception::new);
+        Collection<Comic> saved = user.getSaved();
+        Comic comic = comicsRepository.findById(comic_id).orElseThrow(Exception::new);
+        if(saved.contains(comic)) {
+            return "true";
+        }
+        else return "false";
+    }
+
+    @Override
+    public String containsComicInFavorites(int user_id, int comic_id) throws Exception {
+        User user = repository.findById(user_id).orElseThrow(Exception::new);
+        Collection<Comic> favorites = user.getFavourites();
+        Comic comic = comicsRepository.findById(comic_id).orElseThrow(Exception::new);
+        if(favorites.contains(comic)) {
+            return "true";
+        }
+        else return "false";
+    }
+
 }

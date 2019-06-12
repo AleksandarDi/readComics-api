@@ -37,4 +37,8 @@ public interface UserService {
     String Exists(String userName, String email);
 
     String containsComicInStillReading(int user_id, int comic_id) throws Exception;
+
+    String containsComicInSaved(int user_id, int comic_id) throws Exception;
+
+    String containsComicInFavorites(int user_id, int comic_id) throws Exception;
 }

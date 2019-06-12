@@ -2,15 +2,33 @@
 import React, { Component } from 'react';
 import {
     ACCESS_TOKEN,
+    addFavorite,
+    addSaved,
     getComics,
     getCurrentUser,
     getUserSaved,
-    getUserStillReading
+    getUserStillReading,
+    userHasFavorite,
+    userHasSaved
 } from "../../../repository/readComicsApi";
 import { Icon, Button } from 'semantic-ui-react';
 import LoadingOverlay from "react-loading-overlay";
 import PacmanLoader from 'react-spinners/PacmanLoader';
+import Modal from "react-modal";
+import ComicViewer from "../Discover/ComicViewer/ComicViewer";
 
+const customStyles = {
+    content: {
+        height: '95%',
+        width: '75%',
+        top: '50%',
+        left: '60%',
+        right: '10%',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)'
+    }
+};
 
 class Dashboard extends Component {
 
@@ -24,7 +42,16 @@ class Dashboard extends Component {
             saved: null,
             showContinueReadingFlag: false,
             showSavedFlag: false,
-            isActive: true
+            isActive: true,
+            id: "",
+            comicInfo: "",
+            comicID: "",
+            showInfo: false,
+            modalIsOpen: false,
+            readComicById: false,
+            hiddenNext: false,
+            hiddenPrev: false,
+            categoryOfComic: null
         };
 
         sessionStorage.setItem("active", "Dashboard");
@@ -44,7 +71,10 @@ class Dashboard extends Component {
                             this.setState({
                                 reading: read.slice(0, 3).map((reading, i) => (
                                     <li className="list-inline-item" key={i}>
-                                        <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
+                                        <figure
+                                            className="mt-3 mb-3 ml-4 mr-4 figure"
+                                            key={i}
+                                            onClick={this.seeComicInfo.bind(this, i, reading, read)}>
                                             <img
                                                 className="figure-img img-thumbnail rounded shadow"
                                                 style={{height: "300px", width: "auto"}}
@@ -71,7 +101,9 @@ class Dashboard extends Component {
                             this.setState({
                                 saved: save.slice(0, 3).map((saved, i) => (
                                     <li className="list-inline-item" key={i}>
-                                        <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
+                                        <figure className="mt-3 mb-3 ml-4 mr-4 figure"
+                                                key={i}
+                                                onClick={this.seeComicInfo.bind(this, i, saved, save)}>
                                             <img
                                                 className="figure-img img-thumbnail rounded shadow"
                                                 style={{height: "300px", width: "auto"}}
@@ -100,7 +132,9 @@ class Dashboard extends Component {
                     this.setState({
                         reading: read.slice(0, 3).map((reading, i) => (
                             <li className="list-inline-item" key={i}>
-                                <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
+                                <figure className="mt-3 mb-3 ml-4 mr-4 figure"
+                                        key={i}
+                                        onClick={this.seeComicInfo.bind(this, i, reading, read)}>
                                     <img
                                         className="figure-img img-thumbnail rounded shadow"
                                         style={{height: "300px", width: "auto"}}
@@ -127,7 +161,9 @@ class Dashboard extends Component {
                     this.setState({
                         saved: save.slice(0, 3).map((saved, i) => (
                             <li className="list-inline-item" key={i}>
-                                <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
+                                <figure className="mt-3 mb-3 ml-4 mr-4 figure"
+                                        key={i}
+                                        onClick={this.seeComicInfo.bind(this, i, saved, save)}>
                                     <img
                                         className="figure-img img-thumbnail rounded shadow"
                                         style={{height: "300px", width: "auto"}}
@@ -154,7 +190,9 @@ class Dashboard extends Component {
             this.setState({
                 comics: data.slice(0, 3).map((comic, i) => (
                     <li className="list-inline-item" key={i}>
-                        <figure className="mt-3 mb-3 ml-4 mr-4 figure" key={i}>
+                        <figure className="mt-3 mb-3 ml-4 mr-4 figure"
+                                key={i}
+                                onClick={this.seeComicInfo.bind(this, i, comic, data)}>
                             <img
                                 className="figure-img img-thumbnail rounded shadow"
                                 style={{height: "300px", width: "auto"}}
@@ -195,12 +233,97 @@ class Dashboard extends Component {
     };
 
     signOut = (s) =>{
-        s.preventDefault()
-        localStorage.removeItem(ACCESS_TOKEN)
+        s.preventDefault();
+        localStorage.removeItem(ACCESS_TOKEN);
         sessionStorage.removeItem("currentUser_id");
         sessionStorage.removeItem("active");
         sessionStorage.removeItem("profile_tabs");
         window.location.reload()
+    };
+
+    openComicByid(){
+        this.setState({
+            readComicById: true,
+            modalIsOpen: false
+        });
+    }
+
+    closeComicByid(){
+        this.setState({
+            readComicById: false,
+            modalIsOpen: true
+        });
+    }
+
+    closeModal() {
+        this.setState({
+            modalIsOpen: false
+        });
+        window.location.reload()
+    }
+
+    seeComicInfo = (id, comic, categoryOfComic) =>{
+
+        this.setState({
+            modalIsOpen: true,
+            id: id,
+            comicID: comic.id,
+            comicInfo: comic,
+            categoryOfComic: categoryOfComic
+        });
+    };
+
+    addToFavorites = (id, comic) => {
+        userHasFavorite(id, comic).then((data)=>{
+            if(!data){
+                addFavorite(id, comic);
+            }
+        })
+    };
+
+    saveComic = (id, comic) => {
+        userHasSaved(id, comic).then((data) => {
+            if(!data){
+                addSaved(id, comic);
+            }
+        })
+    };
+
+    handlePrevious = () => {
+
+        if(this.state.id - 1 > -1) {
+            this.setState({
+                id: this.state.id - 1,
+                comicID: this.state.categoryOfComic[this.state.id - 1].id,
+                comicInfo: this.state.categoryOfComic[this.state.id - 1]
+            });
+        }
+        else{
+            this.setState({
+                id: this.state.categoryOfComic.length - 1,
+                comicID: this.state.categoryOfComic[this.state.categoryOfComic.length - 1].id,
+                comicInfo: this.state.categoryOfComic[this.state.categoryOfComic.length - 1]
+            });
+        }
+    };
+
+    handleNext = () => {
+
+        if(this.state.id + 1 < this.state.categoryOfComic.length) {
+            this.setState({
+                id: this.state.id + 1,
+                comicID: this.state.categoryOfComic[this.state.id + 1].id,
+                comicInfo: this.state.categoryOfComic[this.state.id + 1]
+            });
+        }
+        else{
+            this.setState({
+                id: 0,
+                comicID: this.state.categoryOfComic[0].id,
+                comicInfo: this.state.categoryOfComic[0]
+            });
+        }
+
     };
 
     render() {
@@ -333,6 +456,138 @@ class Dashboard extends Component {
                             </div>
                         }
 
+                        <div className="col-lg-9 p-2">
+                            <Modal
+                                isOpen={this.state.modalIsOpen}
+                                onRequestClose={this.closeModal.bind(this)}
+                                style={customStyles}
+                                contentLabel="Comic"
+                                ariaHideApp={false}>
+
+                                <div className="modal-header">
+                                    <Button
+                                        className="float-left"
+                                        onClick={this.handlePrevious.bind(this)}
+                                        hidden={this.state.hiddenPrev}
+                                        basic color='linkedin'
+                                        animated="vertical">
+                                        <Button.Content hidden>Prev</Button.Content>
+                                        <Button.Content visible>
+                                            <Icon
+                                                className={"text-dark text-center h-25 w-25"}
+                                                name="angle left"/>
+                                        </Button.Content>
+                                    </Button>
+                                    <Button.Group className="text-center mx-auto">
+                                        <Button
+                                            onClick={this.openComicByid.bind(this)}
+                                            basic color='black'
+                                            animated="vertical">
+                                            <Button.Content hidden>Read</Button.Content>
+                                            <Button.Content visible>
+                                                <Icon
+                                                    className={"text-dark text-center h-25 w-25"}
+                                                    name="tripadvisor"/>
+                                            </Button.Content>
+                                        </Button>
+                                        <Button
+                                            onClick={
+                                                this.saveComic.bind(this,
+                                                    sessionStorage.getItem("currentUser_id"),
+                                                    this.state.comicInfo.id)}
+                                            basic color='black'
+                                            animated="vertical">
+                                            <Button.Content hidden>Save</Button.Content>
+                                            <Button.Content visible>
+                                                <Icon
+                                                    className={"text-dark text-center h-25 w-25"}
+                                                    name="bookmark outline"/>
+                                            </Button.Content>
+                                        </Button>
+                                        <Button
+                                            onClick={this.addToFavorites.bind(this,
+                                                sessionStorage.getItem("currentUser_id"),
+                                                this.state.comicInfo.id)}
+                                            basic color='black'
+                                            animated="vertical">
+                                            <Button.Content hidden>Favorite</Button.Content>
+                                            <Button.Content visible>
+                                                <Icon
+                                                    className={"text-dark text-center h-25 w-25"}
+                                                    name="heart outline"/>
+                                            </Button.Content>
+                                        </Button>
+                                        <Button
+                                            onClick={this.closeModal.bind(this)}
+                                            basic color='black'
+                                            animated="vertical">
+                                            <Button.Content hidden>Close</Button.Content>
+                                            <Button.Content visible>
+                                                <Icon
+                                                    className={"text-dark text-center h-25 w-25"}
+                                                    name="remove"/>
+                                            </Button.Content>
+                                        </Button>
+                                    </Button.Group>
+                                    <Button
+                                        className="float-right"
+                                        onClick={this.handleNext.bind(this)}
+                                        basic color='linkedin'
+                                        animated="vertical">
+                                        <Button.Content hidden>Next</Button.Content>
+                                        <Button.Content visible>
+                                            <Icon
+                                                className={"text-dark text-center h-25 w-25"}
+                                                name="angle right"/>
+                                        </Button.Content>
+                                    </Button>
+                                </div>
+
+                                <div className="modal-body mx-auto">
+
+                                    <div className="row">
+                                        <div className="float-left">
+                                            <figure
+                                                className="mt-3 mr-3 ml-5 figure"
+                                                key={this.state.comicInfo.id}>
+                                                <img
+                                                    className="figure-img img-thumbnail rounded shadow"
+                                                    style={{height: "400px", width: "auto"}}
+                                                    src={process.env.PUBLIC_URL + this.state.comicInfo.img}
+                                                    alt={this.state.comicInfo.name}/>
+                                            </figure>
+                                        </div>
+
+                                        <div className="float-right col-lg-7">
+                                            <h1 className="m-3 text-center">{this.state.comicInfo.name}</h1>
+                                            <div className="m-5">
+                                                <span className="h4"><b>Writer:</b> {this.state.comicInfo.writer}</span><br/>
+                                                <span className="h4"><b>Artist:</b> {this.state.comicInfo.coverArtist}</span><br/>
+                                                <span className="h4"><b>Category:</b> {this.state.comicInfo.category}</span><br/>
+                                                <br/>
+                                                <br/>
+                                                <span className="pt-5 h4 font-weight-bold">Description:</span><br/>
+                                                <p className="h4">{this.state.comicInfo.description}</p>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </Modal>
+
+                            <Modal
+                                isOpen={this.state.readComicById}
+                                onRequestClose={this.closeComicByid.bind(this)}
+                                style={customStyles}
+                                contentLabel="Comic">
+
+                                <ComicViewer
+                                    id={this.state.comicInfo.id}
+                                    close={this.closeComicByid.bind(this)}/>
+
+                            </Modal>
+                        </div>
                     </LoadingOverlay>
 
 

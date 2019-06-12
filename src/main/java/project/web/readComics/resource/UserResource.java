@@ -139,5 +139,22 @@ public class UserResource {
         );
     }
 
+    @GetMapping("/user/saved")
+    public String DoesSavedExist(@RequestParam("userId") int userId,
+                              @RequestParam("comicId") int comicId) throws Exception{
+        return userServices.containsComicInSaved(
+                userId,
+                comicId
+        );
+    }
+
+    @GetMapping("/user/favorite")
+    public String DoesFavoriteExist(@RequestParam("userId") int userId,
+                                 @RequestParam("comicId") int comicId) throws Exception{
+        return userServices.containsComicInFavorites(
+                userId,
+                comicId
+        );
+    }
 
 }

@@ -31,10 +31,12 @@ class ComicViewer extends Component {
         });
 
         userIsReading(sessionStorage.getItem("currentUser_id"), this.props.id).then((data) => {
+            console.log(data)
             if(!data){
                 addStillReading(sessionStorage.getItem("currentUser_id"), this.props.id);
             }
         })
+
     }
 
     onDocumentComplete = (pages) => {

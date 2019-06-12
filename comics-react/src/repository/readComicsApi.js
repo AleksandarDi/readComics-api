@@ -236,8 +236,8 @@ export const removeSavedFromUser = (user, comic) => {
         method: 'DELETE',
         headers: headers,
         body: JSON.stringify({
-            user_id: user,
-            comic_id: comic
+            userId: user,
+            comicId: comic
         })
     });
 };
@@ -245,6 +245,20 @@ export const removeSavedFromUser = (user, comic) => {
 export const userIsReading = (user, comic) => {
     return request({
         url: "http://localhost:8080/user/still_reading?userId="+user+"&comicId="+comic,
+        method: 'GET'
+    });
+};
+
+export const userHasSaved = (user, comic) => {
+    return request({
+        url: "http://localhost:8080/user/saved?userId="+user+"&comicId="+comic,
+        method: 'GET'
+    });
+};
+
+export const userHasFavorite = (user, comic) => {
+    return request({
+        url: "http://localhost:8080/user/favorite?userId="+user+"&comicId="+comic,
         method: 'GET'
     });
 };

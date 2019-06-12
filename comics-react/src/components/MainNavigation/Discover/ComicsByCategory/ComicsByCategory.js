@@ -1,6 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { Component, useEffect } from 'react';
-import {addFavorite, addSaved, getComicsByCategory} from "../../../../repository/readComicsApi";
+import React, { Component } from 'react';
+import {
+    addFavorite,
+    addSaved,
+    getComicsByCategory,
+    userHasFavorite,
+    userHasSaved
+} from "../../../../repository/readComicsApi";
 import LoadingOverlay from 'react-loading-overlay';
 import PacmanLoader from 'react-spinners/PacmanLoader';
 import Modal from "react-modal";
@@ -71,8 +77,7 @@ class ComicsByCategory extends Component {
     }
 
     seeComicInfo = (id, comic) =>{
-        console.log(id)
-        console.log(comic)
+
         this.setState({
             modalIsOpen: true,
             id: id,
@@ -82,13 +87,19 @@ class ComicsByCategory extends Component {
     };
 
     addToFavorites = (id, comic) => {
-        addFavorite(id, comic);
+        userHasFavorite(id, comic).then((data)=>{
+            if(!data){
+                addFavorite(id, comic);
+            }
+        })
     };
 
     saveComic = (id, comic) => {
-        console.log(id)
-        console.log(comic)
-        addSaved(id, comic);
+        userHasSaved(id, comic).then((data) => {
+            if(!data){
+                addSaved(id, comic);
+            }
+        })
     };
 
     handlePrevious = () => {
@@ -128,40 +139,7 @@ class ComicsByCategory extends Component {
 
     };
 
-
-    renderNext(){
-
-        let nextButton = null;
-
-        if(this.state.comicID !== null){
-            nextButton =
-                <Button
-                    className="float-right"
-                    onClick={this.handleNext.bind(this)}
-                    basic color='linkedin'
-                    animated="vertical">
-                    <Button.Content hidden>Next</Button.Content>
-                    <Button.Content visible>
-                        <Icon
-                            className={"text-dark text-center h-25 w-25"}
-                            name="angle right"/>
-                    </Button.Content>
-                </Button>
-        }
-        return (
-            <span>
-                {nextButton}
-            </span>
-        );
-    }
-
-    renderPrev(){
-
-    }
-
     render() {
-
-        let next = this.renderNext();
 
         if(this.state.comics !== null){
             var comics = this.state.comics.map((comic, i) => (
@@ -275,7 +253,18 @@ class ComicsByCategory extends Component {
                                         </Button.Content>
                                     </Button>
                                 </Button.Group>
-                                {next}
+                                <Button
+                                    className="float-right"
+                                    onClick={this.handleNext.bind(this)}
+                                    basic color='linkedin'
+                                    animated="vertical">
+                                    <Button.Content hidden>Next</Button.Content>
+                                    <Button.Content visible>
+                                        <Icon
+                                            className={"text-dark text-center h-25 w-25"}
+                                            name="angle right"/>
+                                    </Button.Content>
+                                </Button>
                             </div>
 
                             <div className="modal-body mx-auto">
