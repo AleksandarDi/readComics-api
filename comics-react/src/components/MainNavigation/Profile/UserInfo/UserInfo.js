@@ -105,7 +105,11 @@ class UserInfo extends Component {
                 showSuccessMsg: true,
                 showErrorMsg: false
             });
-            updateUserInfo(user);
+            updateUserInfo(user).then( () => {
+                if(this.state.pwd.length > 0){
+                    this.props.signOut()
+                }
+            });
         }
     };
 

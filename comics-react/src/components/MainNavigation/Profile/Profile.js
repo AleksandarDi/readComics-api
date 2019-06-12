@@ -57,8 +57,7 @@ class Profile extends Component {
         sessionStorage.setItem("profile_tabs", "comics")
     }
 
-    signOut = (s) =>{
-        s.preventDefault()
+    signOut = () =>{
         localStorage.removeItem(ACCESS_TOKEN)
         sessionStorage.removeItem("currentUser_id");
         sessionStorage.removeItem("active");
@@ -103,7 +102,9 @@ class Profile extends Component {
                             </ul>
                         </nav>
 
-                        <UserInfo userInfo="info" />
+                        <UserInfo
+                            userInfo="info"
+                            signOut={this.signOut.bind(this)}/>
                     </div>
 
                 }
